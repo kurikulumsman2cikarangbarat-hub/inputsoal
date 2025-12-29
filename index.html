@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEM INPUT SOAL UJIAN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        /* Login Page */
+        .login-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .login-form input, .login-form select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* Message */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Form styles */
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            min-height: 200px;
+            font-family: monospace;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer-note {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Page -->
+        <div id="loginPage">
+            <div class="login-container">
+                <h2><i class="fas fa-lock"></i> Login Sistem Input Soal</h2>
+                
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="nama_guru_login">Nama Guru</label>
+                        <select id="nama_guru_login" name="nama_guru_login" required>
+                            <option value="">Loading daftar guru...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Masukkan password">
+                    </div>
+                    
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Masuk ke Sistem
+                    </button>
+                </form>
+                
+                <div class="footer-note">
+                    Dibuat Oleh Donny Nugroho
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main App -->
+        <div id="appPage" style="display: none;">
+            <header>
+                <h1><i class="fas fa-file-alt"></i> SISTEM INPUT SOAL UJIAN</h1>
+                <div class="user-info">
+                    <span><i class="fas fa-user"></i> <span id="loggedInUser">Loading...</span></span>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="form-section">
+                    <h2><i class="fas fa-user-graduate"></i> Informasi Ujian</h2>
+                    
+                    <div class="form-group">
+                        <label for="id_soal">ID Soal/Ujian</label>
+                        <input type="text" id="id_soal" name="id_soal" placeholder="Contoh: UJIAN-MAT-X-001" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="token">Token Ujian</label>
+                        <input type="text" id="token" name="token" placeholder="Contoh: MAT2023X001" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mapel">Mata Pelajaran</label>
+                        <input type="text" id="mapel" name="mapel" placeholder="Matematika" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="kelas">Jenjang Kelas</label>
+                        <select id="kelas" name="kelas" required>
+                            <option value="">Pilih Kelas</option>
+                            <option value="X">X (Sepuluh)</option>
+                            <option value="XI">XI (Sebelas)</option>
+                            <option value="XII">XII (Dua Belas)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="durasi">Durasi Ujian</label>
+                        <select id="durasi" name="durasi" required>
+                            <option value="">Pilih Durasi</option>
+                            <option value="30">30 Menit</option>
+                            <option value="60">60 Menit</option>
+                            <option value="90">90 Menit</option>
+                            <option value="120">120 Menit</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2><i class="fas fa-paste"></i> Input Data Soal Massal</h2>
+                    
+                    <div class="form-group">
+                        <label for="soal_massal">Data Soal dari Excel</label>
+                        <textarea id="soal_massal" name="soal_massal" placeholder="Tempel data dari Excel di sini. Setiap baris adalah satu soal. Kolom dipisahkan dengan TAB." required></textarea>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <p>Mengirim data ke database...</p>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="button" class="logout-btn" style="background: #6c757d;" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                    <button type="button" class="login-btn" style="width: auto;" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Simpan ke Database
+                    </button>
+                </div>
+                
+                <div class="footer-note">
+                    Dibuat Oleh Donny Nugroho
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Container -->
+    <div id="messageContainer"></div>
+    
+    <script>
+        // ==============================================
+        // STATE MANAGEMENT
+        // ==============================================
+        let currentUser = null;
+        let apiConfig = null;
+        
+        // ==============================================
+        // INITIALIZE APP
+        // ==============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in
+            const savedUser = localStorage.getItem('ujian_user');
+            const savedConfig = localStorage.getItem('ujian_config');
+            
+            if (savedUser && savedConfig) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    apiConfig = JSON.parse(savedConfig);
+                    showApp();
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                    showLogin();
+                }
+            } else {
+                showLogin();
+            }
+            
+            // Load guru list
+            loadGuruList();
+            
+            // Setup event listeners
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('submitBtn').addEventListener('click', handleSubmit);
+            document.getElementById('resetBtn').addEventListener('click', resetForm);
+        });
+        
+        // ==============================================
+        // VIEW MANAGEMENT
+        // ==============================================
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('appPage').style.display = 'none';
+        }
+        
+        function showApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appPage').style.display = 'block';
+            document.getElementById('loggedInUser').textContent = currentUser.nama_guru;
+        }
+        
+        // ==============================================
+        // PROXY FUNCTIONS
+        // ==============================================
+        async function callProxy(action, data = {}) {
+            try {
+                const response = await fetch('/.netlify/functions/nocodb-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: action,
+                        data: data
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error(`Proxy call error for ${action}:`, error);
+                throw error;
+            }
+        }
+        
+        // ==============================================
+        // GURU LIST
+        // ==============================================
+        async function loadGuruList() {
+            const select = document.getElementById('nama_guru_login');
+            
+            try {
+                select.innerHTML = '<option value="">Memuat daftar guru...</option>';
+                
+                const result = await callProxy('get_guru_list');
+                
+                select.innerHTML = '<option value="">Pilih Nama Guru</option>';
+                
+                if (result.success && result.guruList && result.guruList.length > 0) {
+                    result.guruList.forEach(guru => {
+                        const option = document.createElement('option');
+                        option.value = guru.nama_guru;
+                        option.textContent = guru.nama_guru;
+                        select.appendChild(option);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">Tidak ada data guru</option>';
+                }
+            } catch (error) {
+                console.error('Error loading guru list:', error);
+                select.innerHTML = '<option value="">Gagal memuat daftar guru</option>';
+                showMessage('Gagal memuat daftar guru: ' + error.message, 'error');
+            }
+        }
+        
+        // ==============================================
+        // LOGIN HANDLER
+        // ==============================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const namaGuru = document.getElementById('nama_guru_login').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (!namaGuru) {
+                showMessage('Harap pilih nama guru', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showMessage('Harap masukkan password', 'error');
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
+            
+            try {
+                const result = await callProxy('login', {
+                    nama_guru: namaGuru,
+                    password: password
+                });
+                
+                if (result.success) {
+                    // Save user and config
+                    currentUser = {
+                        nama_guru: result.user.nama_guru,
+                        data: result.user
+                    };
+                    
+                    apiConfig = result.config;
+                    
+                    localStorage.setItem('ujian_user', JSON.stringify(currentUser));
+                    localStorage.setItem('ujian_config', JSON.stringify(apiConfig));
+                    
+                    showMessage('Login berhasil!', 'success');
+                    setTimeout(() => {
+                        showApp();
+                    }, 1000);
+                } else {
+                    showMessage(result.message || 'Login gagal', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('Terjadi kesalahan saat login: ' + error.message, 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk ke Sistem';
+            }
+        }
+        
+        // ==============================================
+        // LOGOUT HANDLER
+        // ==============================================
+        function handleLogout() {
+            localStorage.removeItem('ujian_user');
+            localStorage.removeItem('ujian_config');
+            currentUser = null;
+            apiConfig = null;
+            showLogin();
+            resetForm();
+            showMessage('Anda telah logout', 'success');
+        }
+        
+        // ==============================================
+        // SOAL PROCESSING
+        // ==============================================
+        function parseMassalData() {
+            const soalText = document.getElementById('soal_massal').value.trim();
+            const idSoal = document.getElementById('id_soal').value;
+            const token = document.getElementById('token').value;
+            const kelas = document.getElementById('kelas').value;
+            const mapel = document.getElementById('mapel').value;
+            const durasi = document.getElementById('durasi').value;
+            
+            if (!soalText) {
+                showMessage('Data soal massal tidak boleh kosong', 'error');
+                return [];
+            }
+            
+            const lines = soalText.split('\n');
+            const parsedData = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const columns = line.split('\t');
+                
+                if (columns.length < 11) {
+                    showMessage(`Baris ${i + 1}: Harus ada 11 kolom dipisahkan TAB`, 'error');
+                    return [];
+                }
+                
+                const soalId = `${idSoal}-SOAL-${(i + 1).toString().padStart(3, '0')}`;
+                
+                parsedData.push({
+                    id_soal: soalId,
+                    soal: columns[0] || '',
+                    opsi_a: columns[1] || '',
+                    opsi_b: columns[2] || '',
+                    opsi_c: columns[3] || '',
+                    opsi_d: columns[4] || '',
+                    opsi_e: columns[5] || '',
+                    img_link: columns[6] || '',
+                    kunci: 'A',
+                    indikator_soal: columns[7] || '',
+                    materi: columns[8] || '',
+                    kompetensi: columns[9] || '',
+                    level: columns[10] || '',
+                    kelas: kelas,
+                    mapel: mapel,
+                    nama_guru: currentUser.nama_guru,
+                    token: token
+                });
+            }
+            
+            return parsedData;
+        }
+        
+        // ==============================================
+        // SUBMIT HANDLER
+        // ==============================================
+        async function handleSubmit() {
+            // Validate form
+            const required = ['id_soal', 'token', 'mapel', 'kelas', 'durasi', 'soal_massal'];
+            for (const field of required) {
+                const element = document.getElementById(field);
+                if (!element.value.trim()) {
+                    showMessage(`Harap isi ${field}`, 'error');
+                    element.focus();
+                    return;
+                }
+            }
+            
+            const soalData = parseMassalData();
+            if (soalData.length === 0) return;
+            
+            // Show loading
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            
+            try {
+                // 1. Save ujian info
+                const ujianData = {
+                    id_soal: document.getElementById('id_soal').value,
+                    nama_guru: currentUser.nama_guru,
+                    token: document.getElementById('token').value,
+                    kelas: document.getElementById('kelas').value,
+                    mapel: document.getElementById('mapel').value,
+                    durasi: parseInt(document.getElementById('durasi').value),
+                    jml_soal: soalData.length,
+                    tanggal_input: new Date().toISOString().split('T')[0]
+                };
+                
+                const ujianResult = await callProxy('save_data', {
+                    table: 'ujian',
+                    data: ujianData
+                });
+                
+                console.log('Ujian saved:', ujianResult);
+                
+                // 2. Save soal data
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const soal of soalData) {
+                    try {
+                        await callProxy('save_data', {
+                            table: 'bank_soal',
+                            data: soal
+                        });
+                        successCount++;
+                    } catch (error) {
+                        console.error('Error saving soal:', error);
+                        errorCount++;
+                    }
+                }
+                
+                // Show result
+                if (errorCount === 0) {
+                    showMessage(`✅ ${successCount} soal berhasil disimpan!`, 'success');
+                    resetForm();
+                } else {
+                    showMessage(`⚠️ ${successCount} soal berhasil, ${errorCount} soal gagal`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Submit error:', error);
+                showMessage(`❌ Gagal menyimpan: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+        
+        // ==============================================
+        // FORM RESET
+        // ==============================================
+        function resetForm() {
+            document.getElementById('id_soal').value = '';
+            document.getElementById('token').value = '';
+            document.getElementById('mapel').value = '';
+            document.getElementById('kelas').value = '';
+            document.getElementById('durasi').value = '';
+            document.getElementById('soal_massal').value = '';
+        }
+        
+        // ==============================================
+        // MESSAGE UTILITY
+        // ==============================================
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            
+            // Remove existing messages
+            container.innerHTML = '';
+            
+            // Create message
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${text}</span>
+            `;
+            
+            container.appendChild(message);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
