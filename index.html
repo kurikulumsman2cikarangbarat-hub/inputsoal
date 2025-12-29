@@ -3,228 +3,1038 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEM INPUT SOAL UJIAN - NocoDB</title>
+    <title>Sistem Input Soal Ujian - SMAN 2 Cikarang Barat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* STYLE CSS TETAP SAMA SEPERTI SEBELUMNYA */
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 10px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background-color: #f5f7fa;
-            color: #333;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
             line-height: 1.6;
-            padding-bottom: 50px;
+            min-height: 100vh;
+            padding: 20px;
         }
-        
+
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Login Page */
+        .login-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             overflow: hidden;
-            min-height: calc(100vh - 100px);
+            max-width: 500px;
+            margin: 100px auto;
             position: relative;
         }
-        
-        /* ... (SEMUA STYLE LAINNYA TETAP SAMA) ... */
-        
+
+        .login-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .login-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: var(--gray);
+            opacity: 0.7;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main App */
+        .app-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            min-height: calc(100vh - 40px);
+            display: none;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-text h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .logo-text p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px;
+            background: #f8fafc;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .status-text h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .status-text p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .refresh-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: var(--light);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray);
+            position: relative;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--primary);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        /* Form Sections */
+        .form-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .section-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            background: rgba(52, 152, 219, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: var(--danger);
+            margin-left: 4px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 6px;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        select.form-control,
+        input.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23343a40' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-box-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .info-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--secondary);
+        }
+
+        .info-content ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .info-content li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .info-content pre {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin-top: 15px;
+            border: 1px solid var(--light-gray);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray);
+            border: 2px solid var(--light-gray);
+            padding: 14px 28px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-gray);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #27ae60 100%);
+            color: white;
+            padding: 14px 28px;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(52, 152, 219, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 350px;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .toast-message {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            color: var(--dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            background: var(--light);
+            border-top: 1px solid var(--light-gray);
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-info {
+                text-align: center;
+            }
+
+            .tabs-header {
+                flex-direction: column;
+            }
+
+            .tab {
+                justify-content: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .toast {
+                min-width: 300px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Login Page -->
         <div id="loginPage" class="login-container">
-            <h2><i class="fas fa-lock"></i> Login Sistem Input Soal</h2>
-            
-            <div class="error-message" id="loginError">
-                <i class="fas fa-exclamation-circle"></i>
-                <span id="errorText">Nama guru atau password salah</span>
+            <div class="login-header">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>SMAN 2 Cikarang Barat</h1>
+                <p>Sistem Input Soal Ujian Digital</p>
             </div>
             
-            <form id="loginForm" class="login-form">
-                <div class="form-group">
-                    <label for="nama_guru_login" class="required">Nama Guru</label>
-                    <select id="nama_guru_login" name="nama_guru_login" required>
-                        <option value="">Loading daftar guru dari database...</option>
-                    </select>
-                    <div class="label-info">Pilih nama Anda dari daftar database</div>
+            <div class="login-body">
+                <div class="error-message" id="loginError">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>
+                        <strong>Login Gagal</strong>
+                        <span id="errorText">Nama guru atau password salah</span>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="password" class="required">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Masukkan password">
-                    <div class="label-info">Password sesuai dengan database</div>
-                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="nama_guru_login">Nama Guru <span class="required">*</span></label>
+                        <select id="nama_guru_login" class="form-control" required>
+                            <option value="">Loading daftar guru...</option>
+                        </select>
+                        <small>Pilih nama Anda dari daftar guru terdaftar</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                        <small>Password sesuai dengan database sistem</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Masuk ke Sistem</span>
+                    </button>
+                </form>
                 
-                <button type="submit" class="login-btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Masuk ke Sistem
-                </button>
-            </form>
-            
-            <div class="footer-note login-footer">
-                Dibuat Oleh Donny Nugroho
+                <div class="footer">
+                    <p>© 2024 SMAN 2 Cikarang Barat | Dibuat oleh Donny Nugroho</p>
+                </div>
             </div>
         </div>
-        
-        <!-- Main App (Hidden until login) -->
-        <div id="appPage" style="display: none;">
-            <header>
-                <h1><i class="fas fa-file-alt"></i> SISTEM INPUT SOAL UJIAN</h1>
-                <div class="user-info">
-                    <span><i class="fas fa-user"></i> <span id="loggedInUser">Loading...</span></span>
+
+        <!-- Main App -->
+        <div id="appPage" class="app-container">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>SISTEM INPUT SOAL UJIAN</h1>
+                        <p>SMAN 2 Cikarang Barat - Platform Digital Pembelajaran</p>
+                    </div>
+                </div>
+                
+                <div class="user-section">
+                    <div class="user-info">
+                        <div class="user-name" id="loggedInUser">Loading...</div>
+                        <div class="user-role">Guru Mata Pelajaran</div>
+                    </div>
                     <button class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Keluar</span>
                     </button>
                 </div>
             </header>
-            
-            <div class="content">
-                <div id="apiStatus" class="api-status loading">
-                    <i class="fas fa-sync fa-spin"></i>
-                    <span>Memeriksa koneksi API...</span>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="status-info">
+                        <div class="status-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="status-text">
+                            <h3>Status Sistem</h3>
+                            <p id="statusMessage">Memeriksa koneksi ke server...</p>
+                        </div>
+                    </div>
+                    <button class="refresh-btn" id="refreshStatusBtn">
+                        <i class="fas fa-redo"></i>
+                        <span>Refresh Status</span>
+                    </button>
                 </div>
-                
-                <div class="tabs">
-                    <div class="tab active" data-tab="input">Input Soal Ujian</div>
-                </div>
-                
-                <div id="input-tab" class="tab-content active">
-                    <form id="ujianForm">
-                        <div class="form-section">
-                            <h2><i class="fas fa-user-graduate"></i> Informasi Ujian</h2>
-                            
-                            <div class="row">
-                                <div class="col">
+
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs-header">
+                        <div class="tab active" data-tab="input">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Input Soal Ujian</span>
+                        </div>
+                    </div>
+                    
+                    <div id="input-tab" class="tab-content active">
+                        <form id="ujianForm">
+                            <!-- Informasi Ujian -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <h2 class="section-title">Informasi Ujian</h2>
+                                </div>
+                                
+                                <div class="row">
                                     <div class="form-group">
-                                        <label for="id_soal" class="required">ID Soal/Ujian</label>
-                                        <input type="text" id="id_soal" name="id_soal" placeholder="Contoh: UJIAN-MAT-X-001" required>
-                                        <div class="label-info">ID unik untuk soal/ujian ini</div>
+                                        <label for="id_soal">ID Soal/Ujian <span class="required">*</span></label>
+                                        <input type="text" id="id_soal" class="form-control" placeholder="Contoh: UJIAN-MAT-X-001" required>
+                                        <small>ID unik untuk soal/ujian ini (akan disimpan di kedua tabel)</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="token">Token Ujian <span class="required">*</span></label>
+                                        <input type="text" id="token" class="form-control" placeholder="Contoh: MAT2023X001" required>
+                                        <small>Token unik untuk ujian ini</small>
                                     </div>
                                 </div>
                                 
-                                <div class="col">
+                                <div class="row">
                                     <div class="form-group">
-                                        <label for="token" class="required">Token Ujian</label>
-                                        <input type="text" id="token" name="token" placeholder="Contoh: MAT2023X001" required>
-                                        <div class="label-info">Token unik untuk ujian ini</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="mapel" class="required">Mata Pelajaran</label>
-                                        <select id="mapel" name="mapel" required>
+                                        <label for="mapel">Mata Pelajaran <span class="required">*</span></label>
+                                        <select id="mapel" class="form-control" required>
                                             <option value="">Loading mata pelajaran...</option>
                                         </select>
-                                        <div class="label-info">Mata pelajaran untuk ujian ini</div>
+                                        <small>Mata pelajaran untuk ujian ini</small>
                                     </div>
-                                </div>
-                                
-                                <div class="col">
+                                    
                                     <div class="form-group">
-                                        <label for="kelas" class="required">Jenjang Kelas</label>
-                                        <select id="kelas" name="kelas" required>
+                                        <label for="kelas">Jenjang Kelas <span class="required">*</span></label>
+                                        <select id="kelas" class="form-control" required>
                                             <option value="">Pilih Kelas</option>
                                             <option value="X">X (Sepuluh)</option>
                                             <option value="XI">XI (Sebelas)</option>
                                             <option value="XII">XII (Dua Belas)</option>
                                         </select>
-                                        <div class="label-info">Jenjang kelas dalam angka romawi</div>
+                                        <small>Jenjang kelas dalam angka romawi</small>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col">
+                                
+                                <div class="row">
                                     <div class="form-group">
-                                        <label for="durasi" class="required">Durasi Ujian</label>
-                                        <select id="durasi" name="durasi" required>
+                                        <label for="durasi">Durasi Ujian <span class="required">*</span></label>
+                                        <select id="durasi" class="form-control" required>
                                             <option value="">Pilih Durasi</option>
                                             <option value="30">30 Menit</option>
                                             <option value="60">60 Menit</option>
                                             <option value="90">90 Menit</option>
                                             <option value="120">120 Menit</option>
                                         </select>
-                                        <div class="label-info">Durasi ujian dalam menit</div>
+                                        <small>Durasi ujian dalam menit</small>
                                     </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="logged_guru_display">Nama Guru <span class="required">*</span></label>
+                                        <input type="text" id="logged_guru_display" class="form-control" readonly style="background-color: #f8f9fa;">
+                                        <small>Nama guru (tidak dapat diubah)</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Petunjuk Input -->
+                            <div class="info-box">
+                                <div class="info-box-header">
+                                    <div class="info-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <h3 class="info-title">Petunjuk Input Soal Ujian</h3>
                                 </div>
                                 
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="logged_guru_display" class="required">Nama Guru</label>
-                                        <input type="text" id="logged_guru_display" readonly style="background-color: #f5f5f5;">
-                                        <div class="label-info">Nama guru (tidak dapat diubah)</div>
-                                    </div>
+                                <div class="info-content">
+                                    <p>Format untuk input soal dari Excel:</p>
+                                    <ul>
+                                        <li><strong>Setiap baris</strong> mewakili satu soal</li>
+                                        <li><strong>Kolom dalam satu baris</strong> dipisahkan dengan karakter <strong>TAB</strong></li>
+                                        <li>Urutan kolom: <strong>SOAL [TAB] OPSI_A [TAB] OPSI_B [TAB] OPSI_C [TAB] OPSI_D [TAB] OPSI_E [TAB] IMG_LINK [TAB] INDIKATOR_SOAL [TAB] MATERI [TAB] KOMPETENSI [TAB] LEVEL</strong></li>
+                                        <li><strong>OPSI_A</strong> adalah jawaban yang benar (tidak perlu kolom kunci terpisah)</li>
+                                        <li><strong>Pertanyaan dan OPSI A - E harus diisi, IMG_LINK boleh kosong</strong></li>
+                                        <li><strong>INDIKATOR_SOAL, MATERI, KOMPETENSI, LEVEL boleh kosong</strong></li>
+                                    </ul>
+                                    
+                                    <p><strong>Contoh format:</strong></p>
+                                    <pre>Berapakah hasil dari 2+2? [TAB] 4 [TAB] 3 [TAB] 5 [TAB] 6 [TAB] 7 [TAB] https://example.com/gambar1.jpg [TAB] Siswa dapat menjumlahkan bilangan [TAB] Operasi Hitung [TAB] Memahami konsep penjumlahan [TAB] C2
+Ibu kota Indonesia adalah? [TAB] Jakarta [TAB] Bandung [TAB] Surabaya [TAB] Medan [TAB] Yogyakarta [TAB]  [TAB] Siswa mengetahui ibu kota negara [TAB] Geografi [TAB] Mengetahui letak geografis [TAB] C1</pre>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="petunjuk-box">
-                            <h3><i class="fas fa-info-circle"></i> Petunjuk Input Soal Ujian</h3>
-                            <p>Format untuk input soal dari Excel:</p>
-                            <ul>
-                                <li><strong>Setiap baris</strong> mewakili satu soal</li>
-                                <li><strong>Kolom dalam satu baris</strong> dipisahkan dengan karakter <strong>TAB</strong></li>
-                                <li>Urutan kolom: <strong>SOAL [TAB] OPSI_A [TAB] OPSI_B [TAB] OPSI_C [TAB] OPSI_D [TAB] OPSI_E [TAB] IMG_LINK [TAB] INDIKATOR_SOAL [TAB] MATERI [TAB] KOMPETENSI [TAB] LEVEL</strong></li>
-                                <li><strong>OPSI_A</strong> adalah jawaban yang benar</li>
-                                <li><strong>Pertanyaan dan OPSI A - E harus diisi, IMG_LINK boleh kosong</strong></li>
-                                <li><strong>INDIKATOR_SOAL, MATERI, KOMPETENSI, LEVEL boleh kosong</strong></li>
-                            </ul>
-                            <p><strong>Contoh format:</strong><br>
-                            Berapakah hasil dari 2+2? [TAB] 4 [TAB] 3 [TAB] 5 [TAB] 6 [TAB] 7 [TAB] https://example.com/gambar1.jpg [TAB] Siswa dapat menjumlahkan bilangan [TAB] Operasi Hitung [TAB] Memahami konsep penjumlahan [TAB] C2</p>
-                        </div>
-                        
-                        <div class="form-section">
-                            <h2><i class="fas fa-paste"></i> Input Data Soal Massal</h2>
-                            
-                            <div class="form-group">
-                                <label for="soal_massal" class="required">Data Soal dari Excel</label>
-                                <textarea id="soal_massal" name="soal_massal" class="textarea-large" placeholder="Tempel data dari Excel di sini. Setiap baris adalah satu soal. Kolom dipisahkan dengan TAB." required></textarea>
-                                <div class="label-info">Copy-paste dari Excel. Pastikan ada 11 kolom dipisahkan TAB.</div>
+
+                            <!-- Input Soal Massal -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-paste"></i>
+                                    </div>
+                                    <h2 class="section-title">Input Data Soal Massal</h2>
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label for="soal_massal">Data Soal dari Excel <span class="required">*</span></label>
+                                    <textarea id="soal_massal" class="form-control" placeholder="Tempel data dari Excel di sini. Setiap baris adalah satu soal. Kolom dipisahkan dengan TAB." rows="8" required></textarea>
+                                    <small>Copy-paste dari Excel. Pastikan ada 11 kolom dipisahkan TAB: SOAL, OPSI_A, OPSI_B, OPSI_C, OPSI_D, OPSI_E, IMG_LINK, INDIKATOR_SOAL, MATERI, KOMPETENSI, LEVEL</small>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="loading" id="loadingIndicator">
-                            <div class="loading-spinner"></div>
-                            <p>Mengirim data ke database...</p>
-                        </div>
-                        
-                        <div class="success-message" id="successMessage">
-                            <i class="fas fa-check-circle"></i>
-                            <span id="successText">Data berhasil disimpan!</span>
-                        </div>
-                        
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" id="resetBtn">
-                                <i class="fas fa-redo"></i> Reset Form
-                            </button>
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <i class="fas fa-paper-plane"></i> Simpan ke Database
-                            </button>
-                        </div>
-                    </form>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="resetBtn">
+                                    <i class="fas fa-redo"></i>
+                                    <span>Reset Form</span>
+                                </button>
+                                <button type="submit" class="btn btn-success" id="submitBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span>Simpan ke Database</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="footer">
+                    <p>© 2024 SMAN 2 Cikarang Barat | Sistem Input Soal Ujian v1.0 | Dibuat oleh Donny Nugroho</p>
+                </div>
+            </main>
         </div>
     </div>
-    
-    <div class="footer-note" id="appFooter" style="display: none;">
-        Dibuat Oleh Donny Nugroho
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">Memproses data...</div>
+        </div>
     </div>
-    
-    <div id="messageContainer"></div>
-    
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JavaScript -->
     <script>
         // ==============================================
-        // KONFIGURASI PROXY WORKER
+        // KONFIGURASI & INISIALISASI
         // ==============================================
         const PROXY_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
         let API_CONFIG = null;
@@ -254,47 +1064,58 @@
             }
             
             setupEventListeners();
+            loadGuruList();
         }
 
         function showLogin() {
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('appPage').style.display = 'none';
-            document.getElementById('appFooter').style.display = 'none';
-            loadGuruList();
         }
 
         function showApp() {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('appPage').style.display = 'block';
-            document.getElementById('appFooter').style.display = 'block';
             document.getElementById('loggedInUser').textContent = currentUser.nama_guru;
             document.getElementById('logged_guru_display').value = currentUser.nama_guru;
             
             loadMataPelajaran();
-            testApiConnection();
+            updateStatus('loading', 'Memeriksa koneksi ke server...');
+            setTimeout(() => testApiConnection(), 1000);
         }
 
         function setupEventListeners() {
+            // Login
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             
+            // Logout
             document.getElementById('logoutBtn').addEventListener('click', function() {
-                localStorage.removeItem('ujian_guru_user');
-                localStorage.removeItem('ujian_api_config');
-                currentUser = null;
-                API_CONFIG = null;
-                isLoggedIn = false;
-                showLogin();
-                resetForm();
+                showToast('Anda telah keluar dari sistem', 'success');
+                setTimeout(() => {
+                    localStorage.removeItem('ujian_guru_user');
+                    localStorage.removeItem('ujian_api_config');
+                    currentUser = null;
+                    API_CONFIG = null;
+                    isLoggedIn = false;
+                    showLogin();
+                    resetForm();
+                }, 1000);
             });
             
+            // Refresh status
+            document.getElementById('refreshStatusBtn').addEventListener('click', testApiConnection);
+            
+            // Form
             document.getElementById('ujianForm').addEventListener('submit', handleSubmit);
             
+            // Reset
             document.getElementById('resetBtn').addEventListener('click', function() {
                 if (confirm('Apakah Anda yakin ingin mengosongkan semua data yang sudah diisi?')) {
                     resetForm();
+                    showToast('Form telah direset', 'success');
                 }
             });
             
+            // Mata pelajaran
             document.getElementById('mapel').addEventListener('change', function() {
                 if (this.value === '_new') {
                     const newMapel = prompt('Masukkan nama mata pelajaran baru:');
@@ -316,7 +1137,7 @@
         }
 
         // ==============================================
-        // FUNGSI LOGIN - MENGGUNAKAN PROXY WORKER
+        // FUNGSI LOGIN
         // ==============================================
 
         async function loadGuruList() {
@@ -349,26 +1170,11 @@
                             option.textContent = guru;
                             select.appendChild(option);
                         });
-                    } else {
-                        select.innerHTML = `
-                            <option value="">Database guru kosong</option>
-                            <option value="admin">Admin (kontak administrator)</option>
-                        `;
                     }
-                } else {
-                    showLoadGuruError(select);
                 }
             } catch (error) {
                 console.error('Error loading guru list:', error);
-                showLoadGuruError(select);
             }
-        }
-
-        function showLoadGuruError(select) {
-            select.innerHTML = `
-                <option value="">Gagal memuat daftar guru</option>
-                <option value="admin">Admin (kontak administrator)</option>
-            `;
         }
 
         async function handleLogin(e) {
@@ -377,22 +1183,19 @@
             const namaGuru = document.getElementById('nama_guru_login').value;
             const password = document.getElementById('password').value;
             const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
             
-            if (!namaGuru || namaGuru === "") {
-                showMessage('Harap pilih nama guru', 'error');
-                return;
-            }
-            
-            if (!password || password.trim() === '') {
-                showMessage('Harap masukkan password', 'error');
+            if (!namaGuru || !password) {
+                showToast('Harap isi semua field', 'error');
                 return;
             }
             
             loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memeriksa...';
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Memeriksa...</span>';
+            errorDiv.classList.remove('show');
             
             try {
-                const loginResponse = await fetch(`${PROXY_URL}/api/login`, {
+                const response = await fetch(`${PROXY_URL}/api/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -403,20 +1206,17 @@
                     })
                 });
                 
-                if (loginResponse.ok) {
-                    const result = await loginResponse.json();
+                if (response.ok) {
+                    const result = await response.json();
                     
                     if (result.success) {
-                        // Simpan data user dan config
                         currentUser = {
                             nama_guru: namaGuru,
                             data: result.userData || {}
                         };
                         
-                        // Simpan config API dari worker
                         API_CONFIG = {
                             baseUrl: PROXY_URL,
-                            apiToken: 'proxy-no-token-needed', // Token tidak diperlukan karena sudah di proxy
                             tables: {
                                 data: '/api/data',
                                 ujian: '/api/ujian',
@@ -428,22 +1228,24 @@
                         localStorage.setItem('ujian_api_config', JSON.stringify(API_CONFIG));
                         isLoggedIn = true;
                         
-                        showMessage('Login berhasil!', 'success');
+                        showToast('Login berhasil!', 'success');
                         setTimeout(() => {
                             showApp();
                         }, 1000);
                     } else {
-                        showMessage(result.message || 'Login gagal', 'error');
+                        errorDiv.classList.add('show');
+                        document.getElementById('errorText').textContent = result.message || 'Login gagal';
+                        showToast(result.message || 'Login gagal', 'error');
                     }
                 } else {
-                    showMessage('Terjadi kesalahan saat menghubungi server', 'error');
+                    showToast('Terjadi kesalahan saat menghubungi server', 'error');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                showMessage('Terjadi kesalahan saat login', 'error');
+                showToast('Terjadi kesalahan saat login', 'error');
             } finally {
                 loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk ke Sistem';
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Masuk ke Sistem</span>';
             }
         }
 
@@ -452,7 +1254,7 @@
         // ==============================================
 
         async function testApiConnection() {
-            updateApiStatus('loading', 'Memeriksa koneksi API...');
+            updateStatus('loading', 'Memeriksa koneksi ke server...');
             
             try {
                 const response = await fetch(`${PROXY_URL}/api/health`, {
@@ -463,38 +1265,36 @@
                 });
                 
                 if (response.ok) {
-                    updateApiStatus('connected', 'API Terhubung!');
+                    updateStatus('connected', 'Terhubung ke server dengan baik');
                     setTimeout(() => {
-                        document.getElementById('apiStatus').style.display = 'none';
+                        document.querySelector('.status-bar').style.display = 'none';
                     }, 3000);
                 } else {
-                    updateApiStatus('disconnected', 'API Tidak Terhubung');
+                    updateStatus('error', 'Tidak dapat terhubung ke server');
                 }
             } catch (error) {
                 console.error('API connection error:', error);
-                updateApiStatus('disconnected', 'Gagal menghubungi API');
+                updateStatus('error', 'Gagal menghubungi server');
             }
         }
 
-        function updateApiStatus(status, message) {
-            const apiStatus = document.getElementById('apiStatus');
-            const statusIcon = apiStatus.querySelector('i');
-            const statusText = apiStatus.querySelector('span');
-            
-            apiStatus.className = `api-status ${status}`;
+        function updateStatus(status, message) {
+            const statusIcon = document.querySelector('.status-icon i');
+            const statusText = document.getElementById('statusMessage');
             
             switch(status) {
                 case 'connected':
                     statusIcon.className = 'fas fa-check-circle';
+                    statusIcon.style.color = 'var(--success)';
                     break;
-                case 'disconnected':
+                case 'error':
                     statusIcon.className = 'fas fa-times-circle';
+                    statusIcon.style.color = 'var(--danger)';
                     break;
-                case 'warning':
-                    statusIcon.className = 'fas fa-exclamation-triangle';
+                case 'loading':
+                    statusIcon.className = 'fas fa-spinner fa-spin';
+                    statusIcon.style.color = 'var(--primary)';
                     break;
-                default:
-                    statusIcon.className = 'fas fa-sync fa-spin';
             }
             
             statusText.textContent = message;
@@ -576,7 +1376,7 @@
                 });
                 
                 if (response.ok) {
-                    showMessage(`Mata pelajaran "${mapelName}" berhasil ditambahkan`, 'success');
+                    showToast(`Mata pelajaran "${mapelName}" berhasil ditambahkan`, 'success');
                 }
             } catch (error) {
                 console.error('Error saving mata pelajaran:', error);
@@ -597,7 +1397,7 @@
             const namaGuru = currentUser.nama_guru;
             
             if (!soalText) {
-                showMessage('Data soal massal tidak boleh kosong', 'error');
+                showToast('Data soal massal tidak boleh kosong', 'error');
                 return [];
             }
             
@@ -611,13 +1411,13 @@
                 const columns = line.split('\t');
                 
                 if (columns.length < 11) {
-                    showMessage(`Baris ${i + 1} tidak valid. Pastikan ada 11 kolom dipisahkan TAB.`, 'error');
+                    showToast(`Baris ${i + 1} tidak valid. Pastikan ada 11 kolom dipisahkan TAB.`, 'error');
                     return [];
                 }
                 
                 for (let j = 0; j < 6; j++) {
                     if (!columns[j] || columns[j].trim() === '') {
-                        showMessage(`Baris ${i + 1} kolom ${j+1} (${j===0?'SOAL':`OPSI_${String.fromCharCode(64+j)}`}) tidak boleh kosong`, 'error');
+                        showToast(`Baris ${i + 1} kolom ${j+1} (${j===0?'SOAL':`OPSI_${String.fromCharCode(64+j)}`}) tidak boleh kosong`, 'error');
                         return [];
                     }
                 }
@@ -652,32 +1452,6 @@
             return parsedData;
         }
 
-        async function checkToken(token) {
-            try {
-                const response = await fetch(`${PROXY_URL}/api/bank_soal/token/${token}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    if (result.success && result.data && result.data.length > 0) {
-                        return { valid: false, message: "Token sudah digunakan. Harap ganti token." };
-                    }
-                    
-                    return { valid: true, message: "Token tersedia." };
-                }
-                
-                return { valid: true, message: "Token tersedia." };
-            } catch (error) {
-                console.error('Error checking token:', error);
-                return { valid: true, message: "Tidak dapat memeriksa token." };
-            }
-        }
-
         function validateForm() {
             const requiredFields = [
                 'id_soal', 'token', 'mapel', 'kelas', 'durasi', 'soal_massal'
@@ -686,7 +1460,7 @@
             for (const fieldId of requiredFields) {
                 const field = document.getElementById(fieldId);
                 if (!field.value.trim()) {
-                    showMessage(`Harap isi field: ${field.previousElementSibling.textContent}`, 'error');
+                    showToast(`Harap isi field: ${field.previousElementSibling.textContent}`, 'error');
                     field.focus();
                     return false;
                 }
@@ -700,7 +1474,7 @@
                     if (line) {
                         const columns = line.split('\t');
                         if (columns.length < 11) {
-                            showMessage(`Baris ${i + 1}: Format tidak valid. Harus ada 11 kolom dipisahkan TAB.`, 'error');
+                            showToast(`Baris ${i + 1}: Format tidak valid. Harus ada 11 kolom dipisahkan TAB.`, 'error');
                             return false;
                         }
                     }
@@ -725,18 +1499,11 @@
             const durasi = document.getElementById('durasi').value;
             const namaGuru = currentUser.nama_guru;
             
-            document.getElementById('loadingIndicator').style.display = 'block';
-            document.getElementById('submitBtn').disabled = true;
+            // Show loading
+            showLoading('Menyimpan data ke database...');
             
             try {
-                // 1. Periksa token
-                const tokenCheck = await checkToken(token);
-                if (!tokenCheck.valid) {
-                    showMessage(tokenCheck.message, 'error');
-                    return;
-                }
-                
-                // 2. Simpan data ujian
+                // Simpan data ujian
                 const ujianData = {
                     id_soal: idSoal,
                     nama_guru: namaGuru,
@@ -760,7 +1527,7 @@
                     throw new Error('Gagal menyimpan data ujian');
                 }
                 
-                // 3. Simpan soal ke bank_soal
+                // Simpan soal ke bank_soal
                 let successful = 0;
                 let failed = 0;
                 
@@ -785,21 +1552,19 @@
                     }
                 }
                 
-                document.getElementById('loadingIndicator').style.display = 'none';
-                document.getElementById('submitBtn').disabled = false;
+                hideLoading();
                 
                 if (failed === 0) {
-                    showMessage(`✅ ${successful} soal berhasil disimpan!`, 'success');
+                    showToast(`✅ ${successful} soal berhasil disimpan!`, 'success');
                     resetForm();
                 } else {
-                    showMessage(`⚠️ ${successful} soal berhasil, ${failed} soal gagal`, 'warning');
+                    showToast(`⚠️ ${successful} soal berhasil, ${failed} soal gagal`, 'warning');
                 }
                 
             } catch (error) {
                 console.error('Error saving data:', error);
-                document.getElementById('loadingIndicator').style.display = 'none';
-                document.getElementById('submitBtn').disabled = false;
-                showMessage(`❌ Gagal menyimpan data: ${error.message}`, 'error');
+                hideLoading();
+                showToast(`❌ Gagal menyimpan data: ${error.message}`, 'error');
             }
         }
 
@@ -811,40 +1576,66 @@
         }
 
         // ==============================================
-        // FUNGSI PESAN
+        // FUNGSI UTILITAS
         // ==============================================
 
-        function showMessage(text, type = 'info') {
-            const container = document.getElementById('messageContainer');
+        function showLoading(message = 'Memproses...') {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingText').textContent = message;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
             
-            const existingMessages = container.querySelectorAll('.fixed-message');
-            existingMessages.forEach(msg => {
-                setTimeout(() => msg.remove(), 100);
-            });
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
             
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `fixed-message ${type}`;
+            let icon = 'fas fa-info-circle';
+            let title = 'Informasi';
             
-            let icon = 'fa-info-circle';
-            if (type === 'success') icon = 'fa-check-circle';
-            if (type === 'error') icon = 'fa-times-circle';
-            if (type === 'warning') icon = 'fa-exclamation-triangle';
+            switch(type) {
+                case 'success':
+                    icon = 'fas fa-check-circle';
+                    title = 'Sukses';
+                    break;
+                case 'error':
+                    icon = 'fas fa-times-circle';
+                    title = 'Error';
+                    break;
+                case 'warning':
+                    icon = 'fas fa-exclamation-triangle';
+                    title = 'Peringatan';
+                    break;
+            }
             
-            messageDiv.innerHTML = `
-                <i class="fas ${icon}"></i>
-                <span>${text}</span>
-                <button class="close-message">&times;</button>
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close">
+                    <i class="fas fa-times"></i>
+                </button>
             `;
             
-            container.appendChild(messageDiv);
+            container.appendChild(toast);
             
-            messageDiv.querySelector('.close-message').addEventListener('click', () => {
-                messageDiv.remove();
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.remove();
             });
             
+            // Auto remove after 5 seconds
             setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
+                if (toast.parentNode) {
+                    toast.remove();
                 }
             }, 5000);
         }
