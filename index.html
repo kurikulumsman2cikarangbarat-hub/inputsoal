@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Aplikasi Input Soal Ujian</title>
+    <title>Aplikasi Input Soal Ujian</title>
     <style>
         * {
             margin: 0;
@@ -15,79 +15,71 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
+            position: relative;
         }
         
-        .login-container {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-            width: 100%;
-            max-width: 450px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            animation: slideUp 0.6s ease-out;
+            position: relative;
         }
         
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .header {
+        header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 35px 30px;
+            padding: 25px 30px;
             text-align: center;
         }
         
-        .header h1 {
+        h1 {
             font-size: 28px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
         }
         
-        .header .subtitle {
-            font-size: 15px;
+        .subtitle {
             opacity: 0.9;
+            font-size: 16px;
         }
         
-        .login-form {
-            padding: 40px 35px;
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: 600px;
+        }
+        
+        .form-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: #495057;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         select, input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 12px 15px;
             border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 15px;
+            border-radius: 8px;
+            font-size: 14px;
             transition: all 0.3s;
             background: white;
         }
@@ -95,31 +87,33 @@
         select:focus, input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        .password-container {
-            position: relative;
+        .info-box {
+            background: #e7f4ff;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #6c757d;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 5px;
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        
+        .info-box p {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
         }
         
         .btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -127,8 +121,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
         }
         
         .btn-primary {
@@ -137,58 +130,95 @@
         }
         
         .btn-primary:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
         }
         
         .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
         }
         
-        .school-info {
-            text-align: center;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-top: 10px;
         }
         
-        .school-info h3 {
-            color: #495057;
-            font-size: 16px;
-            margin-bottom: 5px;
+        .btn-secondary:hover {
+            background: #5a6268;
         }
         
-        .school-info p {
-            color: #6c757d;
+        .editor-section {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .textarea-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        textarea {
+            flex: 1;
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
             font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .textarea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .soal-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
         }
         
         .status-message {
+            margin-top: 20px;
             padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            border-radius: 8px;
             display: none;
             animation: fadeIn 0.3s;
         }
         
-        .error {
-            background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
-            color: white;
-            border: none;
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         
-        .success {
-            background: linear-gradient(135deg, #51cf66 0%, #2b8a3e 100%);
-            color: white;
-            border: none;
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         
         .loading {
-            background: linear-gradient(135deg, #ffd43b 0%, #f08c00 100%);
-            color: white;
-            border: none;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
         }
         
         @keyframes fadeIn {
@@ -196,33 +226,208 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .pulse {
-            animation: pulse 1.5s infinite;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
         
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .soal-preview {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 3px solid #667eea;
+        }
+        
+        .soal-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .soal-item:last-child {
+            border-bottom: none;
+        }
+        
+        .preview-soal-text {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #343a40;
+        }
+        
+        .preview-opsi {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        
+        .opsi-correct {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .preview-img {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 50px 50px;
+            animation: move 2s linear infinite;
+        }
+        
+        @keyframes move {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Confirmation Overlay */
+        .confirmation-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        
+        .confirmation-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .confirmation-icon {
+            font-size: 60px;
+            color: #28a745;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .confirmation-buttons .btn {
+            flex: 1;
+        }
+        
+        /* Footer */
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             color: rgba(255, 255, 255, 0.8);
-            font-size: 13px;
+            font-size: 12px;
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(5px);
+            z-index: 100;
         }
         
         .footer a {
             color: #fff;
             text-decoration: none;
-            font-weight: 600;
         }
         
         .footer a:hover {
@@ -230,161 +435,291 @@
         }
         
         /* Responsive */
-        @media (max-width: 480px) {
-            .login-container {
-                max-width: 100%;
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
             }
             
-            .login-form {
-                padding: 30px 25px;
+            .form-section {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
             }
             
-            .header {
-                padding: 25px 20px;
+            .confirmation-content {
+                padding: 20px;
             }
             
             .footer {
                 position: static;
                 margin-top: 20px;
-                background: transparent;
-                backdrop-filter: none;
             }
         }
         
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
+        /* Example helper */
+        .example-helper {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 13px;
         }
         
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 36px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        .example-helper h4 {
+            margin-bottom: 10px;
+            color: #495057;
         }
         
-        .form-icon {
-            font-size: 18px;
+        .example-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="header">
-            <div class="logo">🏫</div>
-            <h1>Login Guru</h1>
-            <p class="subtitle">Aplikasi Input Soal Ujian SMAN 2 Cikarang Barat</p>
-        </div>
+    <div class="container">
+        <header>
+            <div>
+                <h1>📝 Aplikasi Input Soal Ujian</h1>
+                <p class="subtitle">Input soal ujian SMAN 2 Cikarang Barat</p>
+            </div>
+        </header>
         
-        <div class="login-form">
-            <div class="status-message" id="status-message"></div>
-            
-            <div class="form-group">
-                <label for="nama-guru"><span class="form-icon">👨‍🏫</span> Nama Guru</label>
-                <select id="nama-guru" required>
-                    <option value="">Pilih nama Anda</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="password"><span class="form-icon">🔐</span> Password</label>
-                <div class="password-container">
-                    <input type="password" id="password" placeholder="Masukkan password" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword()">
-                        👁️
-                    </button>
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="nama-guru">👨‍🏫 Nama Guru</label>
+                    <select id="nama-guru" required>
+                        <option value="">Pilih Nama Guru</option>
+                    </select>
                 </div>
-                <small style="color: #6c757d; font-size: 12px; margin-top: 5px; display: block;">
-                    Password sesuai database sekolah
-                </small>
+                
+                <div class="form-group">
+                    <label for="mapel">📚 Mata Pelajaran</label>
+                    <select id="mapel" required>
+                        <option value="">Pilih Mata Pelajaran</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kelas">🏫 Kelas</label>
+                    <select id="kelas" required>
+                        <option value="">Pilih Kelas</option>
+                        <option value="X">X</option>
+                        <option value="XI">XI</option>
+                        <option value="XII">XII</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="durasi">⏱️ Durasi Ujian (menit)</label>
+                    <select id="durasi" required>
+                        <option value="">Pilih Durasi</option>
+                        <option value="30">30 Menit</option>
+                        <option value="60">60 Menit</option>
+                        <option value="90">90 Menit</option>
+                        <option value="120">120 Menit</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="token">🔑 Token Ujian</label>
+                    <input type="text" id="token" placeholder="Masukkan token ujian" required>
+                </div>
+                
+                <div class="info-box">
+                    <h4>📋 Format Input Soal</h4>
+                    <p>Format per baris: <br>
+                    <strong>SOAL [TAB] OPSI_A [TAB] OPSI_B [TAB] OPSI_C [TAB] OPSI_D [TAB] OPSI_E [TAB] LINK_GAMBAR</strong><br>
+                    • OPSI_A adalah jawaban benar<br>
+                    • LINK_GAMBAR boleh kosong<br>
+                    • Gunakan Copy-Paste dari Excel/Spreadsheet
+                    </p>
+                </div>
+                
+                <button class="btn btn-primary" onclick="previewData()" id="preview-btn">
+                    👁️ Preview Data
+                </button>
+                
+                <button class="btn btn-secondary" onclick="resetForm()">
+                    🔄 Reset Form
+                </button>
             </div>
             
-            <button class="btn btn-primary pulse" onclick="handleLogin()" id="login-btn">
-                <span>🚀</span> Masuk ke Aplikasi
-            </button>
-            
-            <div class="school-info">
-                <h3>SMAN 2 Cikarang Barat</h3>
-                <p>Sistem Input Soal Ujian Digital</p>
+            <!-- Editor Section -->
+            <div class="editor-section">
+                <div class="textarea-header">
+                    <div>
+                        <h3>📝 Input Soal (Format TAB)</h3>
+                        <p style="color: #666; font-size: 14px;">Paste dari Excel/Spreadsheet</p>
+                    </div>
+                    <div class="soal-count" id="soal-count">0 soal</div>
+                </div>
+                
+                <div class="textarea-container">
+                    <textarea id="soal-input" placeholder="Contoh:
+Siapa penemu teori relativitas? [TAB] Albert Einstein [TAB] Isaac Newton [TAB] Galileo Galilei [TAB] Nikola Tesla [TAB] Thomas Edison [TAB] https://example.com/einstein.jpg
+
+Hukum Newton pertama disebut... [TAB] Hukum Inersia [TAB] Hukum Aksi-Reaksi [TAB] Hukum Gravitasi [TAB] Hukum Pascal [TAB] Hukum Archimedes [TAB]
+
+2 + 2 = ? [TAB] 4 [TAB] 5 [TAB] 3 [TAB] 6 [TAB] 2 [TAB]"></textarea>
+                </div>
+                
+                <div class="example-helper">
+                    <h4>💡 Contoh Input dari Excel:</h4>
+                    <div class="example-code">
+Siapa penemu teori relativitas?    Albert Einstein    Isaac Newton    Galileo Galilei    Nikola Tesla    Thomas Edison    https://example.com/einstein.jpg<br>
+Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum Gravitasi    Hukum Pascal    Hukum Archimedes    <br>
+2 + 2 = ?    4    5    3    6    2    
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-text" id="progress-text">Mengunggah...</div>
+                
+                <div class="status-message" id="status-message"></div>
+                
+                <button class="btn btn-primary" onclick="submitData()" style="margin-top: 20px;" id="submit-btn">
+                    💾 Simpan ke Database
+                </button>
             </div>
         </div>
     </div>
     
+    <!-- Preview Modal -->
+    <div class="modal" id="preview-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👁️ Preview Data Ujian</h3>
+                <button class="close-modal" onclick="closePreview()">×</button>
+            </div>
+            
+            <div id="preview-content">
+                <!-- Preview akan ditampilkan di sini -->
+            </div>
+            
+            <button class="btn btn-primary" onclick="submitData()" style="margin-top: 20px;">
+                💾 Konfirmasi & Simpan
+            </button>
+        </div>
+    </div>
+    
+    <!-- Confirmation Overlay -->
+    <div class="confirmation-overlay" id="confirmation-overlay">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">✅</div>
+            <h3>Soal Berhasil Diunggah!</h3>
+            <p id="confirmation-details"></p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" onclick="closeConfirmation()">
+                    Tutup
+                </button>
+                <button class="btn btn-primary" onclick="addMoreQuestions()">
+                    ➕ Tambah Soal Lagi
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
     <div class="footer">
-        Dibuat oleh <a href="mailto:donnyn1980@gmail.com.com">Donny Nugroho</a> • 2026
+        Dibuat oleh <a href="mailto:donny@example.com">Donny Nugroho</a> • SMAN 2 Cikarang Barat • v1.0
     </div>
     
     <script>
-        // Konfigurasi Cloudflare Workers
+        // Konfigurasi Cloudflare Workers Proxy
         const WORKER_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
         
         // State aplikasi
-        let guruData = [];
-        
-        // Fungsi untuk menampilkan pesan
-        function showMessage(message, type = 'error') {
+        let guruList = [];
+        let mapelList = [];
+        let currentUploadDetails = null;
+
+        // Fungsi untuk menampilkan pesan status
+        function showMessage(message, type = 'success') {
             const statusDiv = document.getElementById('status-message');
             statusDiv.textContent = message;
             statusDiv.className = `status-message ${type}`;
             statusDiv.style.display = 'block';
+            
+            // Scroll ke pesan
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
-        // Fungsi untuk menyembunyikan pesan
+
+        // Fungsi untuk menyembunyikan pesan status
         function hideMessage() {
             document.getElementById('status-message').style.display = 'none';
         }
-        
-        // Fungsi untuk toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleBtn = document.querySelector('.toggle-password');
+
+        // Fungsi untuk menampilkan progress bar
+        function showProgress(current, total) {
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.textContent = '👁️';
-            }
+            const percentage = Math.round((current / total) * 100);
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `Mengunggah soal ${current} dari ${total} (${percentage}%)`;
+            
+            progressContainer.style.display = 'block';
+            progressText.style.display = 'block';
         }
-        
-        // Fungsi untuk memuat data guru dari Workers
-        async function loadGuruData() {
+
+        // Fungsi untuk menyembunyikan progress bar
+        function hideProgress() {
+            document.getElementById('progress-container').style.display = 'none';
+            document.getElementById('progress-text').style.display = 'none';
+            document.getElementById('progress-bar').style.width = '0%';
+        }
+
+        // Fungsi untuk memuat data melalui Workers
+        async function fetchViaWorker(endpoint, method = 'GET', data = null) {
+            const url = `${WORKER_URL}${endpoint}`;
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
             try {
-                showMessage('Memuat data guru...', 'loading');
-                
-                const response = await fetch(`${WORKER_URL}/api/data`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
+                const response = await fetch(url, options);
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-                
-                const data = await response.json();
-                guruData = data.list || data || [];
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching via worker:', error);
+                throw error;
+            }
+        }
+
+        // Fungsi untuk memuat data guru
+        async function loadGuruData() {
+            try {
+                showMessage('Memuat data guru...', 'loading');
+                const data = await fetchViaWorker('/api/data');
+                guruList = data.list || data || [];
                 
                 const select = document.getElementById('nama-guru');
-                select.innerHTML = '<option value="">Pilih nama Anda</option>';
+                select.innerHTML = '<option value="">Pilih Nama Guru</option>';
                 
-                // Filter dan sort nama guru unik
-                const uniqueGuru = [...new Set(
-                    guruData
-                        .filter(item => item.nama_guru && item.nama_guru.trim())
-                        .map(item => item.nama_guru.trim())
-                )].sort();
-                
-                uniqueGuru.forEach(nama => {
+                // Ekstrak nama guru unik
+                const uniqueGuru = [...new Set(guruList.map(item => item.nama_guru).filter(Boolean))];
+                uniqueGuru.sort().forEach(nama => {
                     const option = document.createElement('option');
                     option.value = nama;
                     option.textContent = nama;
@@ -392,135 +727,341 @@
                 });
                 
                 hideMessage();
-                
-                if (uniqueGuru.length === 0) {
-                    showMessage('Tidak ada data guru tersedia. Hubungi administrator.', 'error');
-                }
-                
             } catch (error) {
-                console.error('Error loading guru data:', error);
+                console.error('Error loading guru:', error);
                 showMessage('Gagal memuat data guru. Silakan refresh halaman.', 'error');
             }
         }
-        
-        // Fungsi untuk validasi login
-        async function handleLogin() {
-            const namaGuru = document.getElementById('nama-guru').value;
-            const password = document.getElementById('password').value;
-            const loginBtn = document.getElementById('login-btn');
+
+        // Fungsi untuk memuat data mapel
+        async function loadMapelData() {
+            try {
+                const data = await fetchViaWorker('/api/data');
+                const allData = data.list || data || [];
+                
+                const select = document.getElementById('mapel');
+                select.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
+                
+                // Ekstrak mapel unik
+                const uniqueMapel = [...new Set(allData.map(item => item.mapel).filter(Boolean))];
+                uniqueMapel.sort().forEach(mapel => {
+                    const option = document.createElement('option');
+                    option.value = mapel;
+                    option.textContent = mapel;
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading mapel:', error);
+                // Tidak perlu showMessage di sini karena sudah ada di loadGuruData
+            }
+        }
+
+        // Fungsi untuk memproses input soal
+        function parseSoalInput() {
+            const textarea = document.getElementById('soal-input');
+            const lines = textarea.value.trim().split('\n');
             
-            // Validasi input
-            if (!namaGuru || !password) {
-                showMessage('Harap pilih nama guru dan masukkan password', 'error');
+            const soalList = [];
+            
+            lines.forEach((line, index) => {
+                if (line.trim()) {
+                    const parts = line.split('\t');
+                    if (parts.length >= 6) { // Minimal ada soal + 5 opsi
+                        const soal = {
+                            soal: parts[0]?.trim() || '',
+                            opsi_a: parts[1]?.trim() || '',
+                            opsi_b: parts[2]?.trim() || '',
+                            opsi_c: parts[3]?.trim() || '',
+                            opsi_d: parts[4]?.trim() || '',
+                            opsi_e: parts[5]?.trim() || '',
+                            img_link: parts[6]?.trim() || ''
+                        };
+                        soalList.push(soal);
+                    }
+                }
+            });
+            
+            // Update soal count
+            document.getElementById('soal-count').textContent = `${soalList.length} soal`;
+            
+            return soalList;
+        }
+
+        // Fungsi untuk menampilkan preview
+        function previewData() {
+            // Validasi form
+            const namaGuru = document.getElementById('nama-guru').value;
+            const mapel = document.getElementById('mapel').value;
+            const kelas = document.getElementById('kelas').value;
+            const durasi = document.getElementById('durasi').value;
+            const token = document.getElementById('token').value;
+            
+            if (!namaGuru || !mapel || !kelas || !durasi || !token) {
+                showMessage('Harap isi semua field form terlebih dahulu', 'error');
                 return;
             }
             
-            // Nonaktifkan tombol sementara
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<span>⏳</span> Memproses...';
+            const soalList = parseSoalInput();
+            
+            if (soalList.length === 0) {
+                showMessage('Tidak ada soal yang ditemukan. Harap input soal terlebih dahulu.', 'error');
+                return;
+            }
+            
+            // Tampilkan modal preview
+            const modal = document.getElementById('preview-modal');
+            const content = document.getElementById('preview-content');
+            
+            let html = `
+                <div style="margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    <h4>Informasi Ujian</h4>
+                    <p><strong>Guru:</strong> ${namaGuru}</p>
+                    <p><strong>Mata Pelajaran:</strong> ${mapel}</p>
+                    <p><strong>Kelas:</strong> ${kelas}</p>
+                    <p><strong>Durasi:</strong> ${durasi} menit</p>
+                    <p><strong>Token:</strong> ${token}</p>
+                    <p><strong>Jumlah Soal:</strong> ${soalList.length}</p>
+                </div>
+                <hr>
+                <h4>Preview Soal (${soalList.length} soal)</h4>
+            `;
+            
+            soalList.forEach((soal, index) => {
+                html += `
+                    <div class="soal-item">
+                        <div class="preview-soal-text">${index + 1}. ${soal.soal}</div>
+                        <div class="preview-opsi ${soal.opsi_a ? 'opsi-correct' : ''}">A. ${soal.opsi_a}</div>
+                        <div class="preview-opsi">B. ${soal.opsi_b}</div>
+                        <div class="preview-opsi">C. ${soal.opsi_c}</div>
+                        <div class="preview-opsi">D. ${soal.opsi_d}</div>
+                        <div class="preview-opsi">E. ${soal.opsi_e}</div>
+                        ${soal.img_link ? `<div class="preview-img"><strong>Gambar:</strong> ${soal.img_link}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        // Fungsi untuk menutup preview
+        function closePreview() {
+            document.getElementById('preview-modal').style.display = 'none';
+        }
+
+        // Fungsi untuk menampilkan konfirmasi
+        function showConfirmation(details) {
+            const overlay = document.getElementById('confirmation-overlay');
+            const detailsElement = document.getElementById('confirmation-details');
+            
+            detailsElement.innerHTML = details;
+            overlay.style.display = 'flex';
+            
+            // Simpan detail untuk digunakan nanti
+            currentUploadDetails = details;
+        }
+
+        // Fungsi untuk menutup konfirmasi
+        function closeConfirmation() {
+            document.getElementById('confirmation-overlay').style.display = 'none';
+        }
+
+        // Fungsi untuk tambah soal lagi
+        function addMoreQuestions() {
+            closeConfirmation();
+            // Hanya reset textarea soal, pertahankan form lainnya
+            document.getElementById('soal-input').value = '';
+            document.getElementById('soal-count').textContent = '0 soal';
+            document.getElementById('soal-input').focus();
+        }
+
+        // Fungsi untuk submit data ke Workers
+        async function submitData() {
+            // Validasi form
+            const namaGuru = document.getElementById('nama-guru').value;
+            const mapel = document.getElementById('mapel').value;
+            const kelas = document.getElementById('kelas').value;
+            const durasi = document.getElementById('durasi').value;
+            const token = document.getElementById('token').value;
+            
+            if (!namaGuru || !mapel || !kelas || !durasi || !token) {
+                showMessage('Harap isi semua field form terlebih dahulu', 'error');
+                return;
+            }
+            
+            const soalList = parseSoalInput();
+            
+            if (soalList.length === 0) {
+                showMessage('Tidak ada soal yang ditemukan', 'error');
+                return;
+            }
+            
+            // Nonaktifkan tombol
+            const submitBtn = document.getElementById('submit-btn');
+            const previewBtn = document.getElementById('preview-btn');
+            submitBtn.disabled = true;
+            previewBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Mengunggah...';
+            
+            // Tutup modal preview jika terbuka
+            closePreview();
             
             try {
-                showMessage('Memverifikasi kredensial...', 'loading');
+                // 1. Simpan data ke tabel UJIAN
+                const ujianData = {
+                    nama_guru: namaGuru,
+                    mapel: mapel,
+                    kelas: kelas,
+                    durasi: parseInt(durasi),
+                    token: token,
+                    jml_soal: soalList.length,
+                    tanggal_upload: new Date().toISOString()
+                };
                 
-                // Cari data guru yang sesuai
-                const guru = guruData.find(item => 
-                    item.nama_guru && 
-                    item.nama_guru.trim() === namaGuru && 
-                    item.pwd // Pastikan ada kolom pwd
-                );
+                showProgress(0, soalList.length + 1);
                 
-                // Simulasi delay untuk UX
-                await new Promise(resolve => setTimeout(resolve, 800));
+                const ujianResponse = await fetchViaWorker('/api/ujian', 'POST', ujianData);
                 
-                if (!guru) {
-                    throw new Error('Nama guru tidak ditemukan');
+                if (!ujianResponse || ujianResponse.error) {
+                    throw new Error('Gagal menyimpan data ujian');
                 }
                 
-                // Verifikasi password
-                if (guru.pwd !== password) {
-                    throw new Error('Password salah');
+                showProgress(1, soalList.length + 1);
+                
+                // 2. Simpan setiap soal ke tabel BANK_SOAL
+                let successCount = 0;
+                let errorCount = 0;
+                const soalErrors = [];
+                
+                for (let i = 0; i < soalList.length; i++) {
+                    const soal = soalList[i];
+                    const soalData = {
+                        ...soal,
+                        nama_guru: namaGuru,
+                        mapel: mapel,
+                        kelas: kelas,
+                        token: token,
+                        nomor_soal: i + 1
+                    };
+                    
+                    try {
+                        await fetchViaWorker('/api/bank_soal', 'POST', soalData);
+                        successCount++;
+                    } catch (error) {
+                        errorCount++;
+                        soalErrors.push(`Soal ${i + 1}: ${error.message}`);
+                        console.error(`Error saving soal ${i + 1}:`, error);
+                    }
+                    
+                    // Update progress
+                    showProgress(i + 2, soalList.length + 1);
+                    
+                    // Delay kecil untuk menghindari rate limit
+                    if (i < soalList.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
                 }
                 
-                // Login berhasil
-                showMessage('✅ Login berhasil! Mengarahkan...', 'success');
+                // 3. Tampilkan konfirmasi
+                hideProgress();
                 
-                // Simpan data sesi ke localStorage (opsional)
-                localStorage.setItem('loggedInGuru', JSON.stringify({
-                    nama: guru.nama_guru,
-                    mapel: guru.mapel || '',
-                    timestamp: new Date().toISOString()
-                }));
-                
-                // Redirect setelah delay
-                setTimeout(() => {
-                    window.location.href = 'inputsoal.html';
-                }, 1500);
+                if (successCount > 0) {
+                    const details = `
+                        <p><strong>Ujian berhasil dibuat!</strong></p>
+                        <p>Guru: ${namaGuru}<br>
+                        Mapel: ${mapel}<br>
+                        Kelas: ${kelas}<br>
+                        Token: ${token}<br>
+                        Jumlah Soal: ${successCount} berhasil${errorCount > 0 ? `, ${errorCount} gagal` : ''}</p>
+                        ${errorCount > 0 ? `<small style="color: #dc3545;">Beberapa soal gagal disimpan. Silakan cek console untuk detail.</small>` : ''}
+                    `;
+                    
+                    showConfirmation(details);
+                    
+                    // Reset form jika semua berhasil
+                    if (errorCount === 0) {
+                        resetForm();
+                    }
+                    
+                } else {
+                    throw new Error('Gagal menyimpan semua soal');
+                }
                 
             } catch (error) {
-                console.error('Login error:', error);
-                
-                // Tentukan pesan error yang sesuai
-                let errorMessage = 'Login gagal. ';
-                if (error.message.includes('tidak ditemukan')) {
-                    errorMessage += 'Nama guru tidak terdaftar.';
-                } else if (error.message.includes('Password')) {
-                    errorMessage += 'Password salah.';
-                } else {
-                    errorMessage += 'Terjadi kesalahan.';
-                }
-                
-                showMessage(errorMessage, 'error');
-                
-                // Reset tombol
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<span>🚀</span> Masuk ke Aplikasi';
-                
-                // Shake animation untuk efek error
-                const loginContainer = document.querySelector('.login-container');
-                loginContainer.style.animation = 'none';
-                setTimeout(() => {
-                    loginContainer.style.animation = 'shake 0.5s';
-                }, 10);
-                
-                // CSS untuk shake animation
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes shake {
-                        0%, 100% { transform: translateX(0); }
-                        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                        20%, 40%, 60%, 80% { transform: translateX(5px); }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                // Hapus style setelah animasi selesai
-                setTimeout(() => {
-                    document.head.removeChild(style);
-                    loginContainer.style.animation = '';
-                }, 500);
+                console.error('Error saving data:', error);
+                showMessage('❌ Gagal menyimpan data ke database: ' + error.message, 'error');
+            } finally {
+                // Aktifkan kembali tombol
+                submitBtn.disabled = false;
+                previewBtn.disabled = false;
+                submitBtn.innerHTML = '💾 Simpan ke Database';
             }
         }
-        
-        // Event listener untuk Enter key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                handleLogin();
+
+        // Fungsi untuk reset form
+        function resetForm() {
+            document.getElementById('nama-guru').value = '';
+            document.getElementById('mapel').value = '';
+            document.getElementById('kelas').value = '';
+            document.getElementById('durasi').value = '';
+            document.getElementById('token').value = '';
+            document.getElementById('soal-input').value = '';
+            document.getElementById('soal-count').textContent = '0 soal';
+            hideMessage();
+            hideProgress();
+        }
+
+        // Event listener untuk textarea (update count secara realtime)
+        document.getElementById('soal-input').addEventListener('input', function() {
+            parseSoalInput();
+        });
+
+        // Event listener untuk Enter di textarea
+        document.getElementById('soal-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                previewData();
             }
         });
-        
-        // Event listener untuk dropdown change
-        document.getElementById('nama-guru').addEventListener('change', function() {
-            hideMessage();
+
+        // Event listener untuk modal close dengan ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePreview();
+                closeConfirmation();
+            }
         });
-        
-        // Event listener untuk input password
-        document.getElementById('password').addEventListener('input', function() {
-            hideMessage();
+
+        // Event listener untuk klik di luar modal
+        document.addEventListener('click', function(e) {
+            const previewModal = document.getElementById('preview-modal');
+            const confirmationOverlay = document.getElementById('confirmation-overlay');
+            
+            if (e.target === previewModal) {
+                closePreview();
+            }
+            if (e.target === confirmationOverlay) {
+                closeConfirmation();
+            }
         });
-        
+
         // Load data saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            loadGuruData();
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await Promise.all([
+                    loadGuruData(),
+                    loadMapelData()
+                ]);
+                
+                // Tampilkan pesan sukses sebentar
+                showMessage('✅ Data guru dan mata pelajaran berhasil dimuat', 'success');
+                setTimeout(hideMessage, 2000);
+                
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+                showMessage('⚠️ Gagal memuat data awal. Silakan refresh halaman.', 'error');
+            }
         });
     </script>
 </body>
