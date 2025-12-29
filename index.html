@@ -410,6 +410,82 @@
             flex: 1;
         }
         
+        /* Password Verification Overlay */
+        .password-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        
+        .password-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .password-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .password-input-container {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .password-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .password-actions .btn {
+            flex: 1;
+        }
+        
         /* Footer */
         .footer {
             text-align: center;
@@ -445,7 +521,8 @@
                 border-bottom: 1px solid #e9ecef;
             }
             
-            .confirmation-content {
+            .confirmation-content,
+            .password-content {
                 padding: 20px;
             }
             
@@ -478,6 +555,17 @@
             font-family: 'Consolas', monospace;
             font-size: 12px;
             overflow-x: auto;
+        }
+        
+        /* Shake animation for error */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s;
         }
     </style>
 </head>
@@ -588,7 +676,7 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
                 
                 <div class="status-message" id="status-message"></div>
                 
-                <button class="btn btn-primary" onclick="submitData()" style="margin-top: 20px;" id="submit-btn">
+                <button class="btn btn-primary" onclick="initiateSave()" style="margin-top: 20px;" id="submit-btn">
                     💾 Simpan ke Database
                 </button>
             </div>
@@ -607,9 +695,34 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
                 <!-- Preview akan ditampilkan di sini -->
             </div>
             
-            <button class="btn btn-primary" onclick="submitData()" style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="initiateSave()" style="margin-top: 20px;">
                 💾 Konfirmasi & Simpan
             </button>
+        </div>
+    </div>
+    
+    <!-- Password Verification Overlay -->
+    <div class="password-overlay" id="password-overlay">
+        <div class="password-content">
+            <h3><span>🔐</span> Verifikasi Password</h3>
+            <p>Silakan masukkan password untuk konfirmasi penyimpanan data:</p>
+            <div class="password-input-container">
+                <input type="password" id="verification-password" class="password-input" placeholder="Masukkan password" autocomplete="current-password">
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+                    👁️
+                </button>
+            </div>
+            <div id="password-error" style="color: #dc3545; font-size: 14px; margin-top: 10px; display: none;">
+                Password salah. Silakan coba lagi.
+            </div>
+            <div class="password-actions">
+                <button class="btn btn-secondary" onclick="closePasswordOverlay()">
+                    Batal
+                </button>
+                <button class="btn btn-primary" onclick="verifyAndSave()">
+                    ✅ Verifikasi & Lanjutkan
+                </button>
+            </div>
         </div>
     </div>
     
@@ -643,6 +756,7 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
         let guruList = [];
         let mapelList = [];
         let currentUploadDetails = null;
+        let pendingSaveData = null; // Menyimpan data untuk proses save setelah verifikasi
 
         // Fungsi untuk menampilkan pesan status
         function showMessage(message, type = 'success') {
@@ -876,8 +990,96 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
             document.getElementById('soal-input').focus();
         }
 
-        // Fungsi untuk submit data ke Workers
-        async function submitData() {
+        // Fungsi untuk toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('verification-password');
+            const toggleBtn = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // Fungsi untuk menampilkan password overlay
+        function showPasswordOverlay() {
+            const overlay = document.getElementById('password-overlay');
+            const passwordInput = document.getElementById('verification-password');
+            
+            // Reset state
+            passwordInput.value = '';
+            passwordInput.type = 'password';
+            document.querySelector('.password-toggle').textContent = '👁️';
+            document.getElementById('password-error').style.display = 'none';
+            
+            // Tampilkan overlay
+            overlay.style.display = 'flex';
+            passwordInput.focus();
+        }
+
+        // Fungsi untuk menutup password overlay
+        function closePasswordOverlay() {
+            document.getElementById('password-overlay').style.display = 'none';
+            pendingSaveData = null; // Reset pending data
+        }
+
+        // Fungsi untuk verifikasi password dan melanjutkan save
+        async function verifyAndSave() {
+            const passwordInput = document.getElementById('verification-password');
+            const password = passwordInput.value.trim();
+            const errorDiv = document.getElementById('password-error');
+            
+            // Reset error
+            errorDiv.style.display = 'none';
+            
+            if (!password) {
+                errorDiv.textContent = 'Password harus diisi';
+                errorDiv.style.display = 'block';
+                passwordInput.focus();
+                return;
+            }
+            
+            // Cari guru yang dipilih
+            const namaGuru = document.getElementById('nama-guru').value;
+            const selectedGuru = guruList.find(guru => 
+                guru.nama_guru && guru.nama_guru.trim() === namaGuru
+            );
+            
+            if (!selectedGuru) {
+                errorDiv.textContent = 'Data guru tidak ditemukan';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Verifikasi password
+            if (selectedGuru.pwd !== password) {
+                errorDiv.textContent = 'Password salah. Silakan coba lagi.';
+                errorDiv.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                // Add shake effect
+                passwordInput.classList.add('shake');
+                setTimeout(() => {
+                    passwordInput.classList.remove('shake');
+                }, 500);
+                return;
+            }
+            
+            // Password benar, tutup overlay dan lanjutkan save
+            closePasswordOverlay();
+            
+            // Panggil fungsi submitData dengan data yang tersimpan
+            if (pendingSaveData) {
+                await submitData(pendingSaveData);
+            }
+        }
+
+        // Fungsi untuk memulai proses save (inisiasi verifikasi password)
+        async function initiateSave() {
             // Validasi form
             const namaGuru = document.getElementById('nama-guru').value;
             const mapel = document.getElementById('mapel').value;
@@ -897,15 +1099,35 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
                 return;
             }
             
+            // Tutup modal preview jika terbuka
+            closePreview();
+            
+            // Simpan data untuk digunakan nanti
+            pendingSaveData = {
+                namaGuru,
+                mapel,
+                kelas,
+                durasi,
+                token,
+                soalList
+            };
+            
+            // Tampilkan password verification overlay
+            showPasswordOverlay();
+        }
+
+        // Fungsi utama untuk submit data ke Workers (setelah verifikasi password)
+        async function submitData(data) {
+            if (!data) return;
+            
+            const { namaGuru, mapel, kelas, durasi, token, soalList } = data;
+            
             // Nonaktifkan tombol
             const submitBtn = document.getElementById('submit-btn');
             const previewBtn = document.getElementById('preview-btn');
             submitBtn.disabled = true;
             previewBtn.disabled = true;
             submitBtn.innerHTML = '⏳ Mengunggah...';
-            
-            // Tutup modal preview jika terbuka
-            closePreview();
             
             try {
                 // 1. Simpan data ke tabel UJIAN
@@ -996,6 +1218,7 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
                 submitBtn.disabled = false;
                 previewBtn.disabled = false;
                 submitBtn.innerHTML = '💾 Simpan ke Database';
+                pendingSaveData = null; // Reset pending data
             }
         }
 
@@ -1030,6 +1253,7 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
             if (e.key === 'Escape') {
                 closePreview();
                 closeConfirmation();
+                closePasswordOverlay();
             }
         });
 
@@ -1037,12 +1261,23 @@ Hukum Newton pertama disebut...    Hukum Inersia    Hukum Aksi-Reaksi    Hukum G
         document.addEventListener('click', function(e) {
             const previewModal = document.getElementById('preview-modal');
             const confirmationOverlay = document.getElementById('confirmation-overlay');
+            const passwordOverlay = document.getElementById('password-overlay');
             
             if (e.target === previewModal) {
                 closePreview();
             }
             if (e.target === confirmationOverlay) {
                 closeConfirmation();
+            }
+            if (e.target === passwordOverlay) {
+                closePasswordOverlay();
+            }
+        });
+
+        // Event listener untuk Enter di password input
+        document.getElementById('verification-password').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                verifyAndSave();
             }
         });
 
