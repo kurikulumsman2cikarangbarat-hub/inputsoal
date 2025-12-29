@@ -3,33 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Guru - SMAN 2 Cikarang Barat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Login - Aplikasi Input Soal Ujian</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
         
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .card {
+        .login-container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 450px;
             overflow: hidden;
-            animation: slideUp 0.5s ease;
+            animation: slideUp 0.6s ease-out;
         }
         
         @keyframes slideUp {
@@ -44,312 +43,324 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 35px 30px;
             text-align: center;
         }
         
         .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-        
-        .header-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .controls {
+            font-size: 28px;
+            margin-bottom: 8px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
+            justify-content: center;
+            gap: 12px;
         }
         
-        .refresh-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        
+        .login-form {
+            padding: 40px 35px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
             transition: all 0.3s;
-        }
-        
-        .refresh-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
-        
-        .status {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            font-weight: 500;
+            margin-top: 10px;
         }
         
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #e74c3c;
-            animation: pulse 1.5s infinite;
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         
-        .status-indicator.connected {
-            background: #2ecc71;
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
         }
         
-        .table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        }
-        
-        th {
-            padding: 18px 20px;
-            text-align: left;
-            font-weight: 600;
-            color: #2c3e50;
-            border-bottom: 2px solid #dee2e6;
-            font-size: 1rem;
-        }
-        
-        td {
-            padding: 16px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            color: #333;
-            font-size: 0.95rem;
-        }
-        
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-        
-        tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .no-data {
+        .school-info {
             text-align: center;
-            padding: 50px 20px;
-            color: #7f8c8d;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
         }
         
-        .no-data i {
-            font-size: 3rem;
+        .school-info h3 {
+            color: #495057;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .school-info p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            color: #bdc3c7;
+            display: none;
+            animation: fadeIn 0.3s;
         }
         
-        .no-data h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #2c3e50;
+        .error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
+            color: white;
+            border: none;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #51cf66 0%, #2b8a3e 100%);
+            color: white;
+            border: none;
         }
         
         .loading {
-            text-align: center;
-            padding: 50px 20px;
+            background: linear-gradient(135deg, #ffd43b 0%, #f08c00 100%);
+            color: white;
+            border: none;
         }
         
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .pulse {
+            animation: pulse 1.5s infinite;
         }
         
-        .counter {
-            background: #f8f9fa;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .counter span {
-            color: #3498db;
-            font-size: 1.2rem;
-        }
-        
-        @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            th, td {
-                padding: 12px 15px;
-            }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         .footer {
             text-align: center;
             padding: 20px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            border-top: 1px solid #e0e0e0;
-            background: #f8f9fa;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                max-width: 100%;
+            }
+            
+            .login-form {
+                padding: 30px 25px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .footer {
+                position: static;
+                margin-top: 20px;
+                background: transparent;
+                backdrop-filter: none;
+            }
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 36px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-icon {
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="header">
-                <div class="header-icon">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-                <h1>Daftar Guru</h1>
-                <p>SMAN 2 Cikarang Barat</p>
+    <div class="login-container">
+        <div class="header">
+            <div class="logo">🏫</div>
+            <h1>Login Guru</h1>
+            <p class="subtitle">Aplikasi Input Soal Ujian SMAN 2 Cikarang Barat</p>
+        </div>
+        
+        <div class="login-form">
+            <div class="status-message" id="status-message"></div>
+            
+            <div class="form-group">
+                <label for="nama-guru"><span class="form-icon">👨‍🏫</span> Nama Guru</label>
+                <select id="nama-guru" required>
+                    <option value="">Pilih nama Anda</option>
+                </select>
             </div>
             
-            <div class="content">
-                <div class="controls">
-                    <div class="status">
-                        <div class="status-indicator" id="statusIndicator"></div>
-                        <span id="statusText">Memuat data...</span>
-                    </div>
-                    
-                    <button class="refresh-btn" id="refreshBtn">
-                        <i class="fas fa-redo"></i>
-                        <span>Refresh Data</span>
+            <div class="form-group">
+                <label for="password"><span class="form-icon">🔐</span> Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Masukkan password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        👁️
                     </button>
                 </div>
-                
-                <div id="tableWrapper">
-                    <div class="loading" id="loading">
-                        <div class="spinner"></div>
-                        <p>Memuat daftar guru dari database...</p>
-                    </div>
-                    
-                    <div id="noData" class="no-data" style="display: none;">
-                        <i class="fas fa-database"></i>
-                        <h3>Tidak Ada Data</h3>
-                        <p>Belum ada data guru yang tersimpan di database.</p>
-                    </div>
-                    
-                    <div class="table-container" id="tableContainer" style="display: none;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th width="50">No</th>
-                                    <th>Nama Guru</th>
-                                    <th width="100">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dataTable">
-                                <!-- Data akan dimuat di sini -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="counter" id="counter" style="display: none; margin-top: 20px;">
-                    Total Guru: <span id="guruCount">0</span>
-                </div>
+                <small style="color: #6c757d; font-size: 12px; margin-top: 5px; display: block;">
+                    Password sesuai database sekolah
+                </small>
             </div>
             
-            <div class="footer">
-                <p>© 2024 SMAN 2 Cikarang Barat | Sistem Informasi Guru</p>
+            <button class="btn btn-primary pulse" onclick="handleLogin()" id="login-btn">
+                <span>🚀</span> Masuk ke Aplikasi
+            </button>
+            
+            <div class="school-info">
+                <h3>SMAN 2 Cikarang Barat</h3>
+                <p>Sistem Input Soal Ujian Digital</p>
             </div>
         </div>
     </div>
-
+    
+    <div class="footer">
+        Dibuat oleh <a href="mailto:donnyn1980@gmail.com.com">Donny Nugroho</a> • 2026
+    </div>
+    
     <script>
-        const PROXY_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
+        // Konfigurasi Cloudflare Workers
+        const WORKER_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
         
-        // Elemen DOM
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const loading = document.getElementById('loading');
-        const noData = document.getElementById('noData');
-        const tableContainer = document.getElementById('tableContainer');
-        const dataTable = document.getElementById('dataTable');
-        const counter = document.getElementById('counter');
-        const guruCount = document.getElementById('guruCount');
+        // State aplikasi
+        let guruData = [];
         
-        // Fungsi untuk memperbarui status koneksi
-        function updateStatus(connected) {
-            if (connected) {
-                statusIndicator.className = 'status-indicator connected';
-                statusText.textContent = 'Terhubung ke Database';
+        // Fungsi untuk menampilkan pesan
+        function showMessage(message, type = 'error') {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.style.display = 'block';
+        }
+        
+        // Fungsi untuk menyembunyikan pesan
+        function hideMessage() {
+            document.getElementById('status-message').style.display = 'none';
+        }
+        
+        // Fungsi untuk toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
             } else {
-                statusIndicator.className = 'status-indicator';
-                statusText.textContent = 'Tidak Terhubung';
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
             }
         }
         
-        // Fungsi untuk memuat data dari API
-        async function loadData() {
+        // Fungsi untuk memuat data guru dari Workers
+        async function loadGuruData() {
             try {
-                // Tampilkan loading
-                loading.style.display = 'block';
-                noData.style.display = 'none';
-                tableContainer.style.display = 'none';
-                counter.style.display = 'none';
+                showMessage('Memuat data guru...', 'loading');
                 
-                // Update status
-                updateStatus(false);
-                
-                // Ambil data dari API
-                const response = await fetch(`${PROXY_URL}/api/data`, {
+                const response = await fetch(`${WORKER_URL}/api/data`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -360,99 +371,157 @@
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                const result = await response.json();
+                const data = await response.json();
+                guruData = data.list || data || [];
                 
-                // Update status koneksi
-                updateStatus(true);
+                const select = document.getElementById('nama-guru');
+                select.innerHTML = '<option value="">Pilih nama Anda</option>';
                 
-                // Sembunyikan loading
-                loading.style.display = 'none';
+                // Filter dan sort nama guru unik
+                const uniqueGuru = [...new Set(
+                    guruData
+                        .filter(item => item.nama_guru && item.nama_guru.trim())
+                        .map(item => item.nama_guru.trim())
+                )].sort();
                 
-                // Periksa apakah ada data
-                if (result.success && result.data && result.data.length > 0) {
-                    // Tampilkan tabel
-                    displayData(result.data);
-                } else {
-                    // Tampilkan pesan tidak ada data
-                    noData.style.display = 'block';
+                uniqueGuru.forEach(nama => {
+                    const option = document.createElement('option');
+                    option.value = nama;
+                    option.textContent = nama;
+                    select.appendChild(option);
+                });
+                
+                hideMessage();
+                
+                if (uniqueGuru.length === 0) {
+                    showMessage('Tidak ada data guru tersedia. Hubungi administrator.', 'error');
                 }
                 
             } catch (error) {
-                console.error('Error loading data:', error);
-                
-                // Sembunyikan loading
-                loading.style.display = 'none';
-                
-                // Tampilkan pesan error
-                noData.innerHTML = `
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Gagal Memuat Data</h3>
-                    <p>${error.message}</p>
-                `;
-                noData.style.display = 'block';
-                
-                // Update status
-                updateStatus(false);
+                console.error('Error loading guru data:', error);
+                showMessage('Gagal memuat data guru. Silakan refresh halaman.', 'error');
             }
         }
         
-        // Fungsi untuk menampilkan data di tabel
-        function displayData(data) {
-            // Kosongkan tabel
-            dataTable.innerHTML = '';
+        // Fungsi untuk validasi login
+        async function handleLogin() {
+            const namaGuru = document.getElementById('nama-guru').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('login-btn');
             
-            // Filter dan kelompokkan data unik berdasarkan nama_guru
-            const uniqueGuru = [];
-            const seenGuru = new Set();
+            // Validasi input
+            if (!namaGuru || !password) {
+                showMessage('Harap pilih nama guru dan masukkan password', 'error');
+                return;
+            }
             
-            data.forEach(item => {
-                if (item.nama_guru && !seenGuru.has(item.nama_guru)) {
-                    seenGuru.add(item.nama_guru);
-                    uniqueGuru.push(item);
+            // Nonaktifkan tombol sementara
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span>⏳</span> Memproses...';
+            
+            try {
+                showMessage('Memverifikasi kredensial...', 'loading');
+                
+                // Cari data guru yang sesuai
+                const guru = guruData.find(item => 
+                    item.nama_guru && 
+                    item.nama_guru.trim() === namaGuru && 
+                    item.pwd // Pastikan ada kolom pwd
+                );
+                
+                // Simulasi delay untuk UX
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                if (!guru) {
+                    throw new Error('Nama guru tidak ditemukan');
                 }
-            });
-            
-            // Urutkan berdasarkan nama guru
-            uniqueGuru.sort((a, b) => {
-                return a.nama_guru.localeCompare(b.nama_guru);
-            });
-            
-            // Isi tabel dengan data
-            uniqueGuru.forEach((item, index) => {
-                const row = document.createElement('tr');
                 
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>
-                        <strong>${item.nama_guru}</strong>
-                        ${item.mapel ? `<div style="font-size: 0.85rem; color: #666; margin-top: 4px;">${item.mapel}</div>` : ''}
-                    </td>
-                    <td>
-                        <span style="color: #2ecc71; font-weight: 500;">
-                            <i class="fas fa-check-circle"></i> Aktif
-                        </span>
-                    </td>
+                // Verifikasi password
+                if (guru.pwd !== password) {
+                    throw new Error('Password salah');
+                }
+                
+                // Login berhasil
+                showMessage('✅ Login berhasil! Mengarahkan...', 'success');
+                
+                // Simpan data sesi ke localStorage (opsional)
+                localStorage.setItem('loggedInGuru', JSON.stringify({
+                    nama: guru.nama_guru,
+                    mapel: guru.mapel || '',
+                    timestamp: new Date().toISOString()
+                }));
+                
+                // Redirect setelah delay
+                setTimeout(() => {
+                    window.location.href = 'inputsoal.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Tentukan pesan error yang sesuai
+                let errorMessage = 'Login gagal. ';
+                if (error.message.includes('tidak ditemukan')) {
+                    errorMessage += 'Nama guru tidak terdaftar.';
+                } else if (error.message.includes('Password')) {
+                    errorMessage += 'Password salah.';
+                } else {
+                    errorMessage += 'Terjadi kesalahan.';
+                }
+                
+                showMessage(errorMessage, 'error');
+                
+                // Reset tombol
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span>🚀</span> Masuk ke Aplikasi';
+                
+                // Shake animation untuk efek error
+                const loginContainer = document.querySelector('.login-container');
+                loginContainer.style.animation = 'none';
+                setTimeout(() => {
+                    loginContainer.style.animation = 'shake 0.5s';
+                }, 10);
+                
+                // CSS untuk shake animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes shake {
+                        0%, 100% { transform: translateX(0); }
+                        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                        20%, 40%, 60%, 80% { transform: translateX(5px); }
+                    }
                 `;
+                document.head.appendChild(style);
                 
-                dataTable.appendChild(row);
-            });
-            
-            // Update counter
-            guruCount.textContent = uniqueGuru.length;
-            
-            // Tampilkan tabel dan counter
-            tableContainer.style.display = 'block';
-            counter.style.display = 'block';
+                // Hapus style setelah animasi selesai
+                setTimeout(() => {
+                    document.head.removeChild(style);
+                    loginContainer.style.animation = '';
+                }, 500);
+            }
         }
         
-        // Event listener untuk tombol refresh
-        refreshBtn.addEventListener('click', loadData);
+        // Event listener untuk Enter key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
         
-        // Muat data saat halaman pertama kali dibuka
-        document.addEventListener('DOMContentLoaded', loadData);
+        // Event listener untuk dropdown change
+        document.getElementById('nama-guru').addEventListener('change', function() {
+            hideMessage();
+        });
         
-        // Auto-refresh setiap 30 detik
-        setInterval(loadData, 30000);
+        // Event listener untuk input password
+        document.getElementById('password').addEventListener('input', function() {
+            hideMessage();
+        });
+        
+        // Load data saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGuruData();
+        });
     </script>
 </body>
 </html>
