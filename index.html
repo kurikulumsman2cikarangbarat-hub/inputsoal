@@ -1,89 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Soal Ujian - SMAN 2 Cikarang Barat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #2563eb; --secondary: #64748b; --success: #10b981; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #1e293b; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; transition: 0.2s; }
+        select:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        
+        .upload-area { border: 2px dashed #cbd5e1; padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.2s; background: #fdfdfd; }
+        .upload-area:hover { border-color: var(--primary); background: #eff6ff; }
+        .upload-area i { font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px; }
+        
+        #preview-area { margin-top: 20px; display: none; }
+        .stats-badge { background: #e0f2fe; color: #0369a1; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; }
+        
+        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        /* Overlay Password */
+        #password-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; }
+        #password-error { color: #ef4444; font-size: 0.85rem; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2><i class="fas fa-file-import"></i> Upload Soal Ujian</h2>
+    
+    <div class="grid-3">
+        <div class="form-group">
+            <label>Nama Guru</label>
+            <select id="nama-guru"><option value="">Memuat data...</option></select>
+        </div>
+        <div class="form-group">
+            <label>Mata Pelajaran</label>
+            <select id="mapel"><option value="">Memuat data...</option></select>
+        </div>
+        <div class="form-group">
+            <label>Kelas</label>
+            <select id="kelas">
+                <option value="X">Kelas X</option>
+                <option value="XI">Kelas XI</option>
+                <option value="XII">Kelas XII</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grid-3">
+        <div class="form-group">
+            <label>Token Ujian (Contoh: PAS-01)</label>
+            <input type="text" id="token-ujian" placeholder="Masukkan Kode Token">
+        </div>
+        <div class="form-group">
+            <label>Durasi (Menit)</label>
+            <input type="number" id="durasi" value="90">
+        </div>
+    </div>
+
+    <div class="upload-area" onclick="document.getElementById('excel-file').click()">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Klik atau Seret File Excel (.xlsx)</p>
+        <input type="file" id="excel-file" accept=".xlsx" style="display:none" onchange="handleFile(event)">
+    </div>
+
+    <div id="preview-area">
+        <div class="stats-badge" id="soal-stats">0 Soal terdeteksi</div>
+        <button class="btn" id="btn-save" onclick="showPasswordModal()">
+            <i class="fas fa-paper-plane"></i> Simpan ke Database
+        </button>
+    </div>
+</div>
+
+<div id="password-overlay">
+    <div class="modal">
+        <h3>Verifikasi Guru</h3>
+        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Masukkan password Anda untuk menyimpan soal.</p>
+        <input type="password" id="input-pwd" placeholder="Password Anda">
+        <div id="password-error"></div>
+        <button class="btn" onclick="verifyAndSubmit()">Konfirmasi Simpan</button>
+        <button class="btn" style="background:#f1f5f9; color:#64748b;" onclick="closeModal()">Batal</button>
+    </div>
+</div>
+
 <script>
     const WORKER_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
-    let guruList = []; // Database lokal hasil fetch
-    let pendingSaveData = null;
+    let databaseGuru = [];
+    let parsedSoal = [];
 
-    // 1. Fungsi Load Data (Diperbaiki: Memisahkan Guru dan Mapel)
-    async function loadGuruData() {
+    // 1. Load Data Independen (Tanpa Filter)
+    async function loadInitialData() {
         try {
+            const res = await fetch(`${WORKER_URL}/api/data`);
+            const json = await res.json();
+            databaseGuru = json.list || json;
+
             const guruSelect = document.getElementById('nama-guru');
             const mapelSelect = document.getElementById('mapel');
-            
-            guruSelect.innerHTML = '<option value="">Memuat...</option>';
-            mapelSelect.innerHTML = '<option value="">Memuat...</option>';
 
-            const response = await fetch(`${WORKER_URL}/api/data`);
-            if (!response.ok) throw new Error('Koneksi API Gagal');
-            
-            const data = await response.json();
-            // Menangani berbagai kemungkinan struktur JSON (array langsung atau objek .list)
-            guruList = Array.isArray(data) ? data : (data.list || data.data || []);
+            // Ekstrak Nama Guru Unik
+            const listNama = [...new Set(databaseGuru.map(i => i.nama_guru))].filter(n => n).sort();
+            guruSelect.innerHTML = '<option value="">Pilih Guru</option>';
+            listNama.forEach(n => guruSelect.innerHTML += `<option value="${n}">${n}</option>`);
 
-            if (guruList.length === 0) {
-                throw new Error('Data kosong di database');
-            }
+            // Ekstrak Mapel Unik (Independen)
+            const listMapel = [...new Set(databaseGuru.map(i => i.mapel))].filter(m => m).sort();
+            mapelSelect.innerHTML = '<option value="">Pilih Mapel</option>';
+            listMapel.forEach(m => mapelSelect.innerHTML += `<option value="${m}">${m}</option>`);
 
-            // --- PROSES NAMA GURU (Independen) ---
-            const daftarGuru = [...new Set(guruList.map(item => item.nama_guru))]
-                                .filter(n => n) // Hapus nilai null/empty
-                                .sort();
-            
-            guruSelect.innerHTML = '<option value="">Pilih Nama Guru</option>';
-            daftarGuru.forEach(nama => {
-                const opt = document.createElement('option');
-                opt.value = nama;
-                opt.textContent = nama;
-                guruSelect.appendChild(opt);
-            });
-
-            // --- PROSES MAPEL (Independen - Tidak melihat nama guru) ---
-            const daftarMapel = [...new Set(guruList.map(item => item.mapel))]
-                                 .filter(m => m)
-                                 .sort();
-            
-            mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-            daftarMapel.forEach(mapel => {
-                const opt = document.createElement('option');
-                opt.value = mapel;
-                opt.textContent = mapel;
-                mapelSelect.appendChild(opt);
-            });
-
-            console.log("Data berhasil dipetakan:", { guru: daftarGuru.length, mapel: daftarMapel.length });
-            
-        } catch (error) {
-            console.error('Error Load:', error);
-            document.getElementById('nama-guru').innerHTML = '<option value="">Gagal muat</option>';
-            document.getElementById('mapel').innerHTML = '<option value="">Gagal muat</option>';
-            alert("Gagal mengambil data dari Worker: " + error.message);
+        } catch (e) {
+            alert("Gagal memuat profil guru. Periksa koneksi ke Worker.");
         }
     }
 
-    // 2. Fungsi Verifikasi Password (Diperbaiki)
-    function verifyAndSave() {
-        const inputPwd = document.getElementById('verification-password').value;
-        const selectedGuruName = pendingSaveData.namaGuru;
-        
-        // Cari data guru untuk mencocokkan password
-        const dataGuru = guruList.find(g => g.nama_guru === selectedGuruName);
+    // 2. Baca File Excel
+    function handleFile(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const bstr = evt.target.result;
+            const wb = XLSX.read(bstr, { type: 'binary' });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const data = XLSX.utils.sheet_to_json(ws);
+            
+            parsedSoal = data;
+            document.getElementById('preview-area').style.display = 'block';
+            document.getElementById('soal-stats').textContent = `${data.length} Soal siap diunggah`;
+        };
+        reader.readAsBinaryString(file);
+    }
 
-        if (!dataGuru) {
-            alert("Data profil guru tidak ditemukan!");
-            return;
-        }
+    // 3. Verifikasi Password
+    function showPasswordModal() {
+        if(!document.getElementById('nama-guru').value) return alert("Pilih Nama Guru dulu!");
+        document.getElementById('password-overlay').style.display = 'flex';
+    }
 
-        // Konversi ke string untuk menghindari error jika password di excel hanya angka
-        if (String(dataGuru.pwd) === String(inputPwd)) {
-            closePasswordOverlay();
-            submitData(pendingSaveData);
+    function closeModal() {
+        document.getElementById('password-overlay').style.display = 'none';
+        document.getElementById('password-error').style.display = 'none';
+    }
+
+    async function verifyAndSubmit() {
+        const selectedGuru = document.getElementById('nama-guru').value;
+        const pwdInput = document.getElementById('input-pwd').value;
+        const errDiv = document.getElementById('password-error');
+
+        // Cari guru di database lokal
+        const profil = databaseGuru.find(g => g.nama_guru === selectedGuru);
+
+        if (profil && String(profil.pwd) === String(pwdInput)) {
+            closeModal();
+            await processUpload();
         } else {
-            const errDiv = document.getElementById('password-error');
+            errDiv.textContent = "Password salah!";
             errDiv.style.display = 'block';
-            errDiv.textContent = "Password salah untuk guru: " + selectedGuruName;
         }
     }
 
-    // 3. Sisanya tetap menggunakan fungsi initiateSave dan submitData sebelumnya
-    // Namun pastikan fungsi loadGuruData dipanggil saat window load
-    window.onload = loadGuruData;
+    // 4. Proses Upload ke NocoDB
+    async function processUpload() {
+        const btn = document.getElementById('btn-save');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner spin"></i> Mengirim...';
+
+        const payloadHeader = {
+            nama_guru: document.getElementById('nama-guru').value,
+            mapel: document.getElementById('mapel').value,
+            kelas: document.getElementById('kelas').value,
+            token: document.getElementById('token-ujian').value,
+            durasi: parseInt(document.getElementById('durasi').value),
+            jml_soal: parsedSoal.length
+        };
+
+        try {
+            // Simpan ke tabel 'ujian'
+            await fetch(`${WORKER_URL}/api/ujian`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadHeader)
+            });
+
+            // Simpan detail soal ke 'bank_soal'
+            const soalWithMeta = parsedSoal.map(s => ({
+                ...s,
+                token: payloadHeader.token,
+                nama_guru: payloadHeader.nama_guru
+            }));
+
+            await fetch(`${WORKER_URL}/api/bank_soal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(soalWithMeta)
+            });
+
+            alert("Sukses! Data ujian dan soal berhasil disimpan.");
+            location.reload();
+        } catch (e) {
+            alert("Terjadi kesalahan saat menyimpan.");
+            btn.disabled = false;
+        }
+    }
+
+    window.onload = loadInitialData;
 </script>
+
+</body>
+</html>
