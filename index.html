@@ -3,88 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Soal v2 - SMAN 2 Cikarang Barat</title>
+    <title>Input Soal v3 - SMAN 2 Cikarang Barat</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #2563eb; --success: #10b981; --error: #ef4444; }
+        :root { --primary: #2563eb; --success: #10b981; --error: #ef4444; --warning: #f59e0b; }
         body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* Notifikasi Penting */
+        .important-note { background: #fffbeb; border-left: 5px solid var(--warning); padding: 15px; margin-bottom: 20px; border-radius: 4px; color: #92400e; font-size: 0.9rem; }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; }
         label { font-weight: 600; margin-bottom: 5px; font-size: 0.85rem; color: #475569; }
         select, input, textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
         
-        /* Input Mode Tabs */
         .mode-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab { padding: 10px 20px; background: #e2e8f0; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .tab { padding: 10px 20px; background: #e2e8f0; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
         .tab.active { background: var(--primary); color: white; }
-        .mode-content { display: none; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 12px; }
+        .mode-content { display: none; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 12px; background: #fcfcfc; }
         .mode-content.active { display: block; }
 
-        /* Progress & Status */
-        .status-box { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; }
-        .progress-container { height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin: 10px 0; display: none; }
-        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s; }
+        .progress-container { height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin: 20px 0; display: none; }
+        .progress-fill { height: 100%; width: 0%; background: var(--success); transition: width 0.3s; }
         
-        .btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-        .btn-upload { background: var(--primary); color: white; width: 100%; margin-top: 15px; }
-        .btn-download { background: #64748b; color: white; text-decoration: none; font-size: 0.8rem; display: inline-block; margin-bottom: 10px; }
+        .status-box { padding: 15px; border-radius: 8px; display: none; margin-top: 15px; font-weight: 600; text-align: center; }
         
-        #log-area { font-family: monospace; font-size: 0.8rem; margin-top: 10px; max-height: 100px; overflow-y: auto; color: #64748b; }
+        .btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; width: 100%; }
+        .btn-upload { background: var(--primary); color: white; margin-top: 10px; font-size: 1rem; }
+        .btn-upload:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-download { background: #64748b; color: white; text-decoration: none; font-size: 0.8rem; display: inline-block; width: auto; margin-bottom: 10px; padding: 8px 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <h2 style="color:var(--primary)">Input Soal Ujian</h2>
-        <a href="#" onclick="downloadTemplate()" class="btn btn-download"><i class="fas fa-download"></i> Download Template</a>
+        <a href="#" onclick="downloadTemplate()" class="btn btn-download"><i class="fas fa-download"></i> Download Template Excel</a>
+    </div>
+
+    <div class="important-note">
+        <strong><i class="fas fa-exclamation-triangle"></i> PENTING:</strong> 
+        Pastikan <strong>JAWABAN YANG BENAR</strong> selalu diletakkan di kolom <strong>OPSI_A</strong>. 
+        Sistem akan mengacak pilihan jawaban secara otomatis di aplikasi ujian siswa.
     </div>
 
     <div class="grid">
         <div class="form-group">
             <label>Nama Guru</label>
-            <select id="nama-guru"><option>Memuat...</option></select>
+            <select id="nama-guru"><option>Memuat Guru...</option></select>
         </div>
         <div class="form-group">
             <label>Mata Pelajaran</label>
-            <select id="mapel"><option>Memuat...</option></select>
+            <select id="mapel"><option>Memuat Mapel...</option></select>
         </div>
         <div class="form-group">
             <label>Token Ujian</label>
-            <input type="text" id="token-ujian" placeholder="Contoh: MAT10">
+            <input type="text" id="token-ujian" placeholder="Contoh: BIO10PAS">
         </div>
         <div class="form-group">
-            <label>Password Verifikasi</label>
-            <input type="password" id="pwd-input" placeholder="Password Guru">
+            <label>Password</label>
+            <input type="password" id="pwd-input" placeholder="Password Verifikasi">
         </div>
     </div>
 
     <div class="mode-tabs">
-        <div class="tab active" onclick="switchMode('excel')">Upload Excel</div>
-        <div class="tab" onclick="switchMode('paste')">Paste Data (JSON/TSV)</div>
+        <div id="tab-excel" class="tab active" onclick="switchMode('excel')"><i class="fas fa-file-excel"></i> File Excel</div>
+        <div id="tab-paste" class="tab" onclick="switchMode('paste')"><i class="fas fa-paste"></i> Paste dari Excel</div>
     </div>
 
     <div id="mode-excel" class="mode-content active">
         <input type="file" id="file-excel" accept=".xlsx" onchange="handleExcel(this)">
-        <p style="font-size:0.8rem; color:#64748b; margin-top:10px;">Pilih file .xlsx yang sudah diisi sesuai template.</p>
     </div>
 
     <div id="mode-paste" class="mode-content">
-        <textarea id="paste-area" rows="8" style="width:100%" placeholder="Paste data dari Excel (Copy kolomnya saja lalu paste di sini)..."></textarea>
+        <textarea id="paste-area" rows="6" style="width:100%; resize: none;" placeholder="Blok soal di Excel (tanpa header), Copy, lalu Paste di sini..."></textarea>
     </div>
 
     <button class="btn btn-upload" id="btn-submit" onclick="startProcess()">
-        <i class="fas fa-paper-plane"></i> Proses Unggah Data
+        <i class="fas fa-cloud-upload-alt"></i> Unggah Sekarang
     </button>
 
     <div class="progress-container" id="prog-container">
         <div class="progress-fill" id="prog-fill"></div>
     </div>
     <div id="status-msg" class="status-box"></div>
-    <div id="log-area"></div>
 </div>
 
 <script>
@@ -92,83 +97,84 @@
     let databaseGuru = [];
     let readyData = [];
 
-    // --- INITIAL LOAD ---
+    // 1. Ambil Data Guru & Mapel
     async function loadData() {
         try {
             const res = await fetch(`${WORKER_URL}/api/data`);
-            databaseGuru = await res.json();
-            const list = databaseGuru.list || databaseGuru;
+            const json = await res.json();
+            databaseGuru = json.list || json;
             
             const gSel = document.getElementById('nama-guru');
             const mSel = document.getElementById('mapel');
             
-            const gurus = [...new Set(list.map(i => i.nama_guru))].sort();
-            const mapels = [...new Set(list.map(i => i.mapel))].sort();
+            const gurus = [...new Set(databaseGuru.map(i => i.nama_guru))].filter(n => n).sort();
+            const mapels = [...new Set(databaseGuru.map(i => i.mapel))].filter(m => m).sort();
 
             gSel.innerHTML = '<option value="">Pilih Guru</option>' + gurus.map(g => `<option value="${g}">${g}</option>`).join('');
             mSel.innerHTML = '<option value="">Pilih Mapel</option>' + mapels.map(m => `<option value="${m}">${m}</option>`).join('');
-        } catch(e) { showStatus("Gagal ambil data guru", "error"); }
+        } catch(e) { showStatus("Gagal memuat profil guru", "error"); }
     }
 
     function switchMode(mode) {
         document.querySelectorAll('.tab, .mode-content').forEach(el => el.classList.remove('active'));
         document.getElementById(`mode-${mode}`).classList.add('active');
-        event.target.classList.add('active');
+        document.getElementById(`tab-${mode}`).classList.add('active');
     }
 
-    // --- DATA HANDLING ---
+    // 2. Handle File Excel
     function handleExcel(input) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const wb = XLSX.read(e.target.result, {type:'binary'});
             readyData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            showStatus(`${readyData.length} soal terbaca dari Excel`, "success");
+            showStatus(`${readyData.length} soal siap diunggah`, "success");
         };
         reader.readAsBinaryString(input.files[0]);
     }
 
+    // 3. Download Template (Header harus sesuai NocoDB)
     function downloadTemplate() {
-        const header = [["nomor_soal", "soal", "opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e", "kunci_jawaban"]];
+        const header = [["nomor_soal", "soal", "opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e"]];
         const ws = XLSX.utils.aoa_to_sheet(header);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "TemplateSoal");
+        XLSX.utils.book_append_sheet(wb, ws, "Template");
         XLSX.writeFile(wb, "Template_Soal_SMAN2.xlsx");
     }
 
-    // --- UPLOAD PROCESS ---
+    // 4. Proses Utama
     async function startProcess() {
         const guru = document.getElementById('nama-guru').value;
         const pwd = document.getElementById('pwd-input').value;
         const token = document.getElementById('token-ujian').value;
-        
-        // Verifikasi Password
-        const user = (databaseGuru.list || databaseGuru).find(g => g.nama_guru === guru);
-        if(!user || String(user.pwd) !== String(pwd)) {
-            return showStatus("Password salah atau guru belum dipilih!", "error");
-        }
 
-        // Ambil data jika mode paste
+        // Validasi Password
+        const user = databaseGuru.find(g => g.nama_guru === guru);
+        if(!user || String(user.pwd) !== String(pwd)) return showStatus("Password salah!", "error");
+
+        // Jika mode paste
         if(document.getElementById('mode-paste').classList.contains('active')) {
-            const text = document.getElementById('paste-area').value;
-            // Logika sederhana konversi TSV (Excel Paste) ke JSON
+            const text = document.getElementById('paste-area').value.trim();
+            if(!text) return showStatus("Area paste kosong!", "error");
+            
             const rows = text.split("\n").map(r => r.split("\t"));
-            const headers = ["nomor_soal", "soal", "opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e", "kunci_jawaban"];
-            readyData = rows.filter(r => r.length > 1).map(row => {
+            const headers = ["nomor_soal", "soal", "opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e"];
+            readyData = rows.map(row => {
                 let obj = {};
-                headers.forEach((h, i) => obj[h] = row[i]);
+                headers.forEach((h, i) => obj[h] = row[i] || "");
                 return obj;
             });
         }
 
-        if(readyData.length === 0) return showStatus("Data soal kosong!", "error");
+        if(readyData.length === 0) return showStatus("Belum ada soal yang terbaca", "error");
 
         const btn = document.getElementById('btn-submit');
         btn.disabled = true;
         document.getElementById('prog-container').style.display = 'block';
-        showStatus("Memulai pengunggahan...", "success");
+        document.getElementById('prog-fill').style.width = '20%';
 
         try {
-            // 1. Upload Header Ujian
+            // STEP 1: Simpan ke tabel 'ujian'
+            showStatus("Menyimpan Header Ujian...", "success");
             const resUjian = await fetch(`${WORKER_URL}/api/ujian`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -179,35 +185,37 @@
                     jml_soal: readyData.length
                 })
             });
+            if(!resUjian.ok) throw new Error("Gagal simpan header ujian");
+            document.getElementById('prog-fill').style.width = '50%';
 
-            // 2. Upload Bank Soal (Chunked / Bertahap agar tidak timeout)
-            const logArea = document.getElementById('log-area');
-            const total = readyData.length;
+            // STEP 2: Simpan ke tabel 'bank_soal' (Gunakan Bulk Insert format NocoDB)
+            showStatus(`Mengunggah ${readyData.length} butir soal...`, "success");
             
-            // Tambahkan metadata ke setiap soal
-            const finalSoal = readyData.map(s => ({
+            const payloadSoal = readyData.map(s => ({
                 ...s,
                 token: token,
                 nama_guru: guru
             }));
 
-            // Kirim data ke NocoDB (NocoDB POST API menerima Array untuk Bulk Insert)
+            // Kirim ke bank_soal
             const resSoal = await fetch(`${WORKER_URL}/api/bank_soal`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(finalSoal) 
+                body: JSON.stringify(payloadSoal) // NocoDB V1 API menerima array langsung
             });
 
             if(resSoal.ok) {
                 document.getElementById('prog-fill').style.width = '100%';
-                showStatus("Selesai! Semua data berhasil masuk ke database.", "success");
+                showStatus("BERHASIL! Semua soal dan data ujian tersimpan.", "success");
                 setTimeout(() => location.reload(), 3000);
             } else {
-                throw new Error("Gagal kirim ke bank_soal");
+                const errLog = await resSoal.text();
+                console.error(errLog);
+                throw new Error("Tabel 'bank_soal' menolak data. Pastikan nama kolom di NocoDB sudah benar.");
             }
 
         } catch(e) {
-            showStatus("Error: " + e.message, "error");
+            showStatus("Gagal: " + e.message, "error");
             btn.disabled = false;
         }
     }
@@ -217,7 +225,7 @@
         box.style.display = 'block';
         box.style.background = type === 'success' ? '#dcfce7' : '#fee2e2';
         box.style.color = type === 'success' ? '#166534' : '#991b1b';
-        box.textContent = msg;
+        box.innerHTML = msg;
     }
 
     window.onload = loadData;
