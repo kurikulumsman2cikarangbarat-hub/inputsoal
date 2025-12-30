@@ -1,334 +1,89 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Input Soal Ujian - SMAN 2 Cikarang Barat</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #667eea; min-height: 100vh; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-        header { background: #667eea; color: white; padding: 25px 30px; text-align: center; }
-        h1 { font-size: 28px; margin-bottom: 5px; }
-        .subtitle { opacity: 0.9; font-size: 16px; margin-bottom: 5px; }
-        .main-content { display: grid; grid-template-columns: 350px 1fr; min-height: 600px; }
-        .form-section { padding: 30px; background: #f8f9fa; border-right: 1px solid #e9ecef; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 14px; }
-        select, input { width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; background: white; outline: none; transition: border-color 0.3s; }
-        select:focus, input:focus { border-color: #667eea; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-primary { background: #667eea; color: white; margin-top: 10px; }
-        .btn-secondary { background: #6c757d; color: white; margin-top: 10px; }
-        .editor-section { padding: 30px; display: flex; flex-direction: column; }
-        textarea { flex: 1; width: 100%; padding: 20px; border: 2px solid #e9ecef; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 13px; resize: none; margin-bottom: 10px; }
-        .soal-count { background: #667eea; color: white; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; }
-        .status-message { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; font-size: 14px; font-weight: 500; }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        .password-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center; }
-        .password-content { background: white; padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; }
-        .footer { text-align: center; padding: 15px; color: white; font-size: 12px; }
-        @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } .form-section { border-right: none; border-bottom: 1px solid #e9ecef; } }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>📝 Aplikasi Input Soal Ujian</h1>
-            <p class="subtitle">SMAN 2 Cikarang Barat</p>
-        </header>
-        
-        <div class="main-content">
-            <div class="form-section">
-                <div class="form-group">
-                    <label>👨‍🏫 Nama Guru</label>
-                    <select id="nama-guru" required onchange="filterMapelByGuru()">
-                        <option value="">Memuat data guru...</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>📚 Mata Pelajaran</label>
-                    <select id="mapel" required>
-                        <option value="">Pilih Guru Terlebih Dahulu</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>🏫 Kelas</label>
-                    <select id="kelas" required>
-                        <option value="">Pilih Kelas</option>
-                        <option value="X">X</option>
-                        <option value="XI">XI</option>
-                        <option value="XII">XII</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>⏱️ Durasi Ujian (menit)</label>
-                    <select id="durasi" required>
-                        <option value="">Pilih Durasi</option>
-                        <option value="30">30 Menit</option>
-                        <option value="45">45 Menit</option>
-                        <option value="60">60 Menit</option>
-                        <option value="90">90 Menit</option>
-                        <option value="120">120 Menit</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>🔑 Token Ujian</label>
-                    <input type="text" id="token" placeholder="Contoh: MAT10-PAS" required>
-                </div>
-                
-                <button class="btn btn-primary" onclick="previewData()">👁️ Preview Data</button>
-                <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
-            </div>
-            
-            <div class="editor-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div>
-                        <h3>📝 Input Soal (Format TAB)</h3>
-                        <p style="color: #666; font-size: 12px;">Copy sel dari Excel (Soal [TAB] A [TAB] B [TAB] C [TAB] D [TAB] E [TAB] Link Gambar)</p>
-                    </div>
-                    <div class="soal-count" id="soal-count">0 soal</div>
-                </div>
-                
-                <textarea id="soal-input" placeholder="Paste data Excel di sini..."></textarea>
-                
-                <div class="status-message" id="status-message"></div>
-                
-                <button class="btn btn-primary" id="save-btn" onclick="initiateSave()" style="margin-top: 10px;">💾 Simpan ke Database</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="password-overlay" id="password-overlay">
-        <div class="password-content">
-            <h3>🔐 Verifikasi Password</h3>
-            <p style="margin: 10px 0; font-size: 14px; color: #666;">Silakan masukkan password akun guru Anda.</p>
-            <input type="password" id="verification-password" style="width:100%; padding:12px; margin-bottom:10px; border:2px solid #ddd; border-radius:8px;">
-            <div id="password-error" style="color:red; font-size:12px; display:none; margin-bottom:10px;">Password salah</div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-secondary" onclick="closePasswordOverlay()" style="flex:1;">Batal</button>
-                <button class="btn btn-primary" onclick="verifyAndSave()" style="flex:1; margin-top:0;">✅ Verifikasi</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="footer">
-        Dibuat oleh Donny Nugroho • SMAN 2 Cikarang Barat © 2024
-    </div>
-    
-    <script>
-        const WORKER_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
-        let guruList = [];
-        let pendingSaveData = null;
+<script>
+    const WORKER_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
+    let guruList = []; // Database lokal hasil fetch
+    let pendingSaveData = null;
 
-        function showMessage(message, type = 'success') {
-            const statusDiv = document.getElementById('status-message');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message ${type}`;
-            statusDiv.style.display = 'block';
-            if (type !== 'loading') {
-                setTimeout(() => statusDiv.style.display = 'none', 5000);
-            }
-        }
-
-        async function loadGuruData() {
-            try {
-                const response = await fetch(`${WORKER_URL}/api/data`);
-                if (!response.ok) throw new Error('Koneksi ke server gagal');
-                
-                const data = await response.json();
-                guruList = Array.isArray(data) ? data : (data.list || []);
-                
-                const guruSelect = document.getElementById('nama-guru');
-                guruSelect.innerHTML = '<option value="">Pilih Nama Guru</option>';
-                
-                // Ambil unik nama guru
-                const uniqueGuru = [...new Set(guruList.map(item => item.nama_guru))].sort();
-                
-                uniqueGuru.forEach(nama => {
-                    const option = document.createElement('option');
-                    option.value = nama;
-                    option.textContent = nama;
-                    guruSelect.appendChild(option);
-                });
-                
-                showMessage('Data guru berhasil dimuat', 'success');
-            } catch (error) {
-                console.error('Error:', error);
-                showMessage('Gagal memuat data guru. Periksa koneksi internet.', 'error');
-            }
-        }
-
-        function filterMapelByGuru() {
-            const selectedGuru = document.getElementById('nama-guru').value;
+    // 1. Fungsi Load Data (Diperbaiki: Memisahkan Guru dan Mapel)
+    async function loadGuruData() {
+        try {
+            const guruSelect = document.getElementById('nama-guru');
             const mapelSelect = document.getElementById('mapel');
+            
+            guruSelect.innerHTML = '<option value="">Memuat...</option>';
+            mapelSelect.innerHTML = '<option value="">Memuat...</option>';
+
+            const response = await fetch(`${WORKER_URL}/api/data`);
+            if (!response.ok) throw new Error('Koneksi API Gagal');
+            
+            const data = await response.json();
+            // Menangani berbagai kemungkinan struktur JSON (array langsung atau objek .list)
+            guruList = Array.isArray(data) ? data : (data.list || data.data || []);
+
+            if (guruList.length === 0) {
+                throw new Error('Data kosong di database');
+            }
+
+            // --- PROSES NAMA GURU (Independen) ---
+            const daftarGuru = [...new Set(guruList.map(item => item.nama_guru))]
+                                .filter(n => n) // Hapus nilai null/empty
+                                .sort();
+            
+            guruSelect.innerHTML = '<option value="">Pilih Nama Guru</option>';
+            daftarGuru.forEach(nama => {
+                const opt = document.createElement('option');
+                opt.value = nama;
+                opt.textContent = nama;
+                guruSelect.appendChild(opt);
+            });
+
+            // --- PROSES MAPEL (Independen - Tidak melihat nama guru) ---
+            const daftarMapel = [...new Set(guruList.map(item => item.mapel))]
+                                 .filter(m => m)
+                                 .sort();
+            
             mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-            
-            if (!selectedGuru) return;
-
-            const mapels = guruList
-                .filter(item => item.nama_guru === selectedGuru)
-                .map(item => item.mapel);
-            
-            const uniqueMapel = [...new Set(mapels)].sort();
-            
-            uniqueMapel.forEach(mapel => {
-                const option = document.createElement('option');
-                option.value = mapel;
-                option.textContent = mapel;
-                mapelSelect.appendChild(option);
+            daftarMapel.forEach(mapel => {
+                const opt = document.createElement('option');
+                opt.value = mapel;
+                opt.textContent = mapel;
+                mapelSelect.appendChild(opt);
             });
-        }
 
-        function parseSoalInput() {
-            const text = document.getElementById('soal-input').value.trim();
-            if (!text) {
-                document.getElementById('soal-count').textContent = '0 soal';
-                return [];
-            }
-
-            const lines = text.split(/\r?\n/);
-            const soalList = [];
+            console.log("Data berhasil dipetakan:", { guru: daftarGuru.length, mapel: daftarMapel.length });
             
-            lines.forEach(line => {
-                const parts = line.split('\t');
-                if (parts.length >= 6) { // Minimal sampai Opsi E
-                    soalList.push({
-                        soal: parts[0]?.trim(),
-                        opsi_a: parts[1]?.trim(),
-                        opsi_b: parts[2]?.trim(),
-                        opsi_c: parts[3]?.trim(),
-                        opsi_d: parts[4]?.trim(),
-                        opsi_e: parts[5]?.trim(),
-                        img_link: parts[6]?.trim() || ''
-                    });
-                }
-            });
-            
-            document.getElementById('soal-count').textContent = `${soalList.length} soal`;
-            return soalList;
+        } catch (error) {
+            console.error('Error Load:', error);
+            document.getElementById('nama-guru').innerHTML = '<option value="">Gagal muat</option>';
+            document.getElementById('mapel').innerHTML = '<option value="">Gagal muat</option>';
+            alert("Gagal mengambil data dari Worker: " + error.message);
+        }
+    }
+
+    // 2. Fungsi Verifikasi Password (Diperbaiki)
+    function verifyAndSave() {
+        const inputPwd = document.getElementById('verification-password').value;
+        const selectedGuruName = pendingSaveData.namaGuru;
+        
+        // Cari data guru untuk mencocokkan password
+        const dataGuru = guruList.find(g => g.nama_guru === selectedGuruName);
+
+        if (!dataGuru) {
+            alert("Data profil guru tidak ditemukan!");
+            return;
         }
 
-        function previewData() {
-            const soalList = parseSoalInput();
-            const payload = {
-                guru: document.getElementById('nama-guru').value,
-                mapel: document.getElementById('mapel').value,
-                token: document.getElementById('token').value,
-                total: soalList.length
-            };
-
-            if (!payload.guru || !payload.mapel || !payload.token) {
-                alert("Mohon lengkapi Nama Guru, Mapel, dan Token!");
-                return;
-            }
-
-            alert(`PREVIEW DATA:\n----------------\nGuru: ${payload.guru}\nMapel: ${payload.mapel}\nToken: ${payload.token}\nJumlah Soal: ${payload.total}\n\nPastikan data sudah benar sebelum simpan.`);
+        // Konversi ke string untuk menghindari error jika password di excel hanya angka
+        if (String(dataGuru.pwd) === String(inputPwd)) {
+            closePasswordOverlay();
+            submitData(pendingSaveData);
+        } else {
+            const errDiv = document.getElementById('password-error');
+            errDiv.style.display = 'block';
+            errDiv.textContent = "Password salah untuk guru: " + selectedGuruName;
         }
+    }
 
-        function initiateSave() {
-            const soalList = parseSoalInput();
-            const data = {
-                namaGuru: document.getElementById('nama-guru').value,
-                mapel: document.getElementById('mapel').value,
-                kelas: document.getElementById('kelas').value,
-                durasi: document.getElementById('durasi').value,
-                token: document.getElementById('token').value,
-                soalList: soalList
-            };
-
-            if (!data.namaGuru || !data.mapel || !data.token || soalList.length === 0) {
-                showMessage('Lengkapi form dan masukkan soal!', 'error');
-                return;
-            }
-
-            pendingSaveData = data;
-            document.getElementById('password-overlay').style.display = 'flex';
-            document.getElementById('verification-password').value = '';
-            document.getElementById('password-error').style.display = 'none';
-        }
-
-        function closePasswordOverlay() {
-            document.getElementById('password-overlay').style.display = 'none';
-            pendingSaveData = null;
-        }
-
-        function verifyAndSave() {
-            const inputPwd = document.getElementById('verification-password').value;
-            const guruData = guruList.find(g => g.nama_guru === pendingSaveData.namaGuru);
-
-            if (guruData && String(guruData.pwd) === String(inputPwd)) {
-                closePasswordOverlay();
-                submitData(pendingSaveData);
-            } else {
-                document.getElementById('password-error').style.display = 'block';
-            }
-        }
-
-        async function submitData(data) {
-            const saveBtn = document.getElementById('save-btn');
-            saveBtn.disabled = true;
-            showMessage('Sedang memproses...', 'loading');
-
-            try {
-                // 1. Simpan Header Ujian
-                const resUjian = await fetch(`${WORKER_URL}/api/ujian`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        nama_guru: data.namaGuru,
-                        mapel: data.mapel,
-                        kelas: data.kelas,
-                        durasi: parseInt(data.durasi),
-                        token: data.token,
-                        jml_soal: data.soalList.length
-                    })
-                });
-
-                if (!resUjian.ok) throw new Error('Gagal simpan data header ujian');
-
-                // 2. Simpan Butir Soal
-                let successCount = 0;
-                for (let i = 0; i < data.soalList.length; i++) {
-                    const resSoal = await fetch(`${WORKER_URL}/api/bank_soal`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            ...data.soalList[i],
-                            nama_guru: data.namaGuru,
-                            mapel: data.mapel,
-                            kelas: data.kelas,
-                            token: data.token,
-                            nomor_soal: i + 1
-                        })
-                    });
-                    if (resSoal.ok) successCount++;
-                }
-
-                showMessage(`✅ Sukses! ${successCount} soal berhasil disimpan.`, 'success');
-                resetForm();
-            } catch (error) {
-                showMessage(error.message, 'error');
-            } finally {
-                saveBtn.disabled = false;
-            }
-        }
-
-        function resetForm() {
-            document.getElementById('token').value = '';
-            document.getElementById('soal-input').value = '';
-            document.getElementById('soal-count').textContent = '0 soal';
-        }
-
-        document.getElementById('soal-input').addEventListener('input', parseSoalInput);
-        document.addEventListener('DOMContentLoaded', loadGuruData);
-    </script>
-</body>
-</html>
+    // 3. Sisanya tetap menggunakan fungsi initiateSave dan submitData sebelumnya
+    // Namun pastikan fungsi loadGuruData dipanggil saat window load
+    window.onload = loadGuruData;
+</script>
