@@ -15,7 +15,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Navbar & Branding */
         .navbar { background: white; padding: 1rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
         .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--primary); font-size: 1.2rem; }
         .user-info { display: none; align-items: center; gap: 15px; font-size: 0.9rem; font-weight: 600; }
@@ -24,18 +23,15 @@
 
         .container { flex: 1; max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; width: 100%; }
 
-        /* Login Card */
         #login-card { max-width: 400px; margin: 4rem auto; background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .login-title { text-align: center; margin-bottom: 2rem; }
         .login-title h2 { color: var(--primary); font-size: 1.5rem; }
 
-        /* Dashboard Card */
         #dashboard-area { display: none; }
         .card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
         
         .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f1f5f9; color: var(--primary); }
 
-        /* Form Styling */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.025em; }
@@ -43,22 +39,18 @@
         select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1); }
         textarea { min-height: 250px; font-family: 'Courier New', monospace; background: #fcfcfc; }
 
-        /* Button Styling */
         .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
         .btn-primary { background: var(--primary); color: white; width: 100%; }
         .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
         .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
 
-        /* Progress Bar */
         .progress-wrapper { display: none; margin-top: 1.5rem; }
         .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
         .progress-bg { height: 10px; background: #e2e8f0; border-radius: 100px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; background: var(--success); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Footer */
         footer { text-align: center; padding: 2rem; color: #64748b; font-size: 0.85rem; }
         .status-msg { margin-top: 1rem; padding: 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; display: none; }
-
         @media (max-width: 640px) { .navbar { padding: 1rem; } .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -161,39 +153,30 @@
     let dataGuru = [];
     let currentUser = null;
 
-    // Load Data Inisial
     async function init() {
         try {
+            // URL ini memicu parameter limit=1000 di Worker
             const res = await fetch(`${WORKER_URL}/api/data`);
             dataGuru = await res.json();
             const list = dataGuru.list || dataGuru;
-            
             const loginSelect = document.getElementById('login-guru');
             const namaGuruList = [...new Set(list.map(i => i.nama_guru))].filter(Boolean).sort();
-            
             loginSelect.innerHTML = '<option value="">Pilih Nama Anda</option>' + 
                 namaGuruList.map(n => `<option value="${n}">${n}</option>`).join('');
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     }
 
-    // Sistem Login
     function login() {
         const selected = document.getElementById('login-guru').value;
         const pwd = document.getElementById('login-pwd').value;
         const err = document.getElementById('login-error');
-
         const user = (dataGuru.list || dataGuru).find(u => u.nama_guru === selected && String(u.pwd) === String(pwd));
-
         if (user) {
             currentUser = user;
             document.getElementById('login-card').style.display = 'none';
             document.getElementById('dashboard-area').style.display = 'block';
             document.getElementById('user-display').style.display = 'flex';
             document.getElementById('welcome-msg').textContent = `Halo, ${user.nama_guru}`;
-            
-            // Isi pilihan mapel sesuai guru
             const mapelSel = document.getElementById('mapel-select');
             const mapels = [...new Set((dataGuru.list || dataGuru).map(i => i.mapel))].filter(Boolean).sort();
             mapelSel.innerHTML = mapels.map(m => `<option value="${m}">${m}</option>`).join('');
@@ -213,12 +196,11 @@
         box.textContent = msg;
     }
 
-    // Logika Unggah
     async function prosesUnggah() {
         const mapel = document.getElementById('mapel-select').value;
         const kelas = document.getElementById('kelas').value;
         const durasi = document.getElementById('durasi').value;
-        const token = document.getElementById('token').value;
+        const token = document.getElementById('token').value.trim();
         const rawSoal = document.getElementById('paste-area').value.trim();
 
         if (!token || !rawSoal) return showUIStatus("Lengkapi Token dan Konten Soal!", "danger");
@@ -233,6 +215,18 @@
         pWrap.style.display = 'block';
 
         try {
+            // --- LOGIKA CEK TOKEN (BARU) ---
+            pTxt.textContent = "Memeriksa ketersediaan token...";
+            const checkRes = await fetch(`${WORKER_URL}/api/ujian?where=(token,eq,${token})`);
+            const checkData = await checkRes.json();
+            const existing = checkData.list || checkData;
+
+            if (existing.length > 0) {
+                btn.disabled = false;
+                pWrap.style.display = 'none';
+                return showUIStatus(`Token "${token}" sudah ada di database! Gunakan token lain.`, "danger");
+            }
+
             // 1. Simpan Ujian
             pTxt.textContent = "Mendaftarkan Jadwal Ujian...";
             const resUjian = await fetch(`${WORKER_URL}/api/ujian`, {
@@ -247,35 +241,26 @@
                     jml_soal: barisArr.length
                 })
             });
-
-            if (!resUjian.ok) throw new Error("Gagal mendaftarkan ujian. Token mungkin sudah terpakai.");
+            if (!resUjian.ok) throw new Error("Gagal mendaftarkan ujian.");
 
             // 2. Simpan Soal Satu-Satu
             let sukses = 0;
             for (let i = 0; i < barisArr.length; i++) {
                 const col = barisArr[i].split("\t");
                 const payload = {
-                    nama_guru: currentUser.nama_guru,
-                    mapel: mapel,
-                    kelas: kelas,
-                    token: token,
-                    nomor_soal: i + 1,
-                    soal: col[0]?.trim() || "",
-                    opsi_a: col[1]?.trim() || "",
-                    opsi_b: col[2]?.trim() || "",
-                    opsi_c: col[3]?.trim() || "",
-                    opsi_d: col[4]?.trim() || "",
-                    opsi_e: col[5]?.trim() || "",
+                    nama_guru: currentUser.nama_guru, mapel: mapel, kelas: kelas,
+                    token: token, nomor_soal: i + 1,
+                    soal: col[0]?.trim() || "", opsi_a: col[1]?.trim() || "",
+                    opsi_b: col[2]?.trim() || "", opsi_c: col[3]?.trim() || "",
+                    opsi_d: col[4]?.trim() || "", opsi_e: col[5]?.trim() || "",
                     img_link: col[6]?.trim() || ""
                 };
-
-                pTxt.textContent = `Mengirim soal ${i+1} dari ${barisArr.length}...`;
+                pTxt.textContent = `Mengirim soal ${i+1}/${barisArr.length}...`;
                 const resSoal = await fetch(`${WORKER_URL}/api/bank_soal`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
                 });
-
                 if (resSoal.ok) {
                     sukses++;
                     const percent = Math.round((sukses / barisArr.length) * 100);
@@ -283,18 +268,15 @@
                     document.getElementById('prog-percent').textContent = percent + '%';
                 }
             }
-
             if (sukses === barisArr.length) {
-                showUIStatus(`Selesai! ${sukses} soal berhasil disimpan.`, "success");
+                showUIStatus(`Selesai! ${sukses} soal disimpan.`, "success");
                 setTimeout(() => location.reload(), 3000);
             }
-
         } catch (e) {
             showUIStatus(e.message, "danger");
             btn.disabled = false;
         }
     }
-
     window.onload = init;
 </script>
 </body>
