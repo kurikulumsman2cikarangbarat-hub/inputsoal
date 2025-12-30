@@ -3,220 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Soal Ujian - SMAN 2 Cikarang Barat</title>
+    <title>Input Soal v2 - SMAN 2 Cikarang Barat</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #2563eb; --secondary: #64748b; --success: #10b981; --bg: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #1e293b; padding: 20px; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        :root { --primary: #2563eb; --success: #10b981; --error: #ef4444; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; transition: 0.2s; }
-        select:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; margin-bottom: 5px; font-size: 0.85rem; color: #475569; }
+        select, input, textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
         
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
-        
-        .upload-area { border: 2px dashed #cbd5e1; padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.2s; background: #fdfdfd; }
-        .upload-area:hover { border-color: var(--primary); background: #eff6ff; }
-        .upload-area i { font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px; }
-        
-        #preview-area { margin-top: 20px; display: none; }
-        .stats-badge { background: #e0f2fe; color: #0369a1; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; }
-        
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
-        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        /* Input Mode Tabs */
+        .mode-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab { padding: 10px 20px; background: #e2e8f0; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .tab.active { background: var(--primary); color: white; }
+        .mode-content { display: none; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 12px; }
+        .mode-content.active { display: block; }
 
-        /* Overlay Password */
-        #password-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; }
-        #password-error { color: #ef4444; font-size: 0.85rem; margin-top: 10px; display: none; }
+        /* Progress & Status */
+        .status-box { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; }
+        .progress-container { height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin: 10px 0; display: none; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s; }
+        
+        .btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-upload { background: var(--primary); color: white; width: 100%; margin-top: 15px; }
+        .btn-download { background: #64748b; color: white; text-decoration: none; font-size: 0.8rem; display: inline-block; margin-bottom: 10px; }
+        
+        #log-area { font-family: monospace; font-size: 0.8rem; margin-top: 10px; max-height: 100px; overflow-y: auto; color: #64748b; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2><i class="fas fa-file-import"></i> Upload Soal Ujian</h2>
-    
-    <div class="grid-3">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="color:var(--primary)">Input Soal Ujian</h2>
+        <a href="#" onclick="downloadTemplate()" class="btn btn-download"><i class="fas fa-download"></i> Download Template</a>
+    </div>
+
+    <div class="grid">
         <div class="form-group">
             <label>Nama Guru</label>
-            <select id="nama-guru"><option value="">Memuat data...</option></select>
+            <select id="nama-guru"><option>Memuat...</option></select>
         </div>
         <div class="form-group">
             <label>Mata Pelajaran</label>
-            <select id="mapel"><option value="">Memuat data...</option></select>
+            <select id="mapel"><option>Memuat...</option></select>
         </div>
         <div class="form-group">
-            <label>Kelas</label>
-            <select id="kelas">
-                <option value="X">Kelas X</option>
-                <option value="XI">Kelas XI</option>
-                <option value="XII">Kelas XII</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="grid-3">
-        <div class="form-group">
-            <label>Token Ujian (Contoh: PAS-01)</label>
-            <input type="text" id="token-ujian" placeholder="Masukkan Kode Token">
+            <label>Token Ujian</label>
+            <input type="text" id="token-ujian" placeholder="Contoh: MAT10">
         </div>
         <div class="form-group">
-            <label>Durasi (Menit)</label>
-            <input type="number" id="durasi" value="90">
+            <label>Password Verifikasi</label>
+            <input type="password" id="pwd-input" placeholder="Password Guru">
         </div>
     </div>
 
-    <div class="upload-area" onclick="document.getElementById('excel-file').click()">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <p>Klik atau Seret File Excel (.xlsx)</p>
-        <input type="file" id="excel-file" accept=".xlsx" style="display:none" onchange="handleFile(event)">
+    <div class="mode-tabs">
+        <div class="tab active" onclick="switchMode('excel')">Upload Excel</div>
+        <div class="tab" onclick="switchMode('paste')">Paste Data (JSON/TSV)</div>
     </div>
 
-    <div id="preview-area">
-        <div class="stats-badge" id="soal-stats">0 Soal terdeteksi</div>
-        <button class="btn" id="btn-save" onclick="showPasswordModal()">
-            <i class="fas fa-paper-plane"></i> Simpan ke Database
-        </button>
+    <div id="mode-excel" class="mode-content active">
+        <input type="file" id="file-excel" accept=".xlsx" onchange="handleExcel(this)">
+        <p style="font-size:0.8rem; color:#64748b; margin-top:10px;">Pilih file .xlsx yang sudah diisi sesuai template.</p>
     </div>
-</div>
 
-<div id="password-overlay">
-    <div class="modal">
-        <h3>Verifikasi Guru</h3>
-        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Masukkan password Anda untuk menyimpan soal.</p>
-        <input type="password" id="input-pwd" placeholder="Password Anda">
-        <div id="password-error"></div>
-        <button class="btn" onclick="verifyAndSubmit()">Konfirmasi Simpan</button>
-        <button class="btn" style="background:#f1f5f9; color:#64748b;" onclick="closeModal()">Batal</button>
+    <div id="mode-paste" class="mode-content">
+        <textarea id="paste-area" rows="8" style="width:100%" placeholder="Paste data dari Excel (Copy kolomnya saja lalu paste di sini)..."></textarea>
     </div>
+
+    <button class="btn btn-upload" id="btn-submit" onclick="startProcess()">
+        <i class="fas fa-paper-plane"></i> Proses Unggah Data
+    </button>
+
+    <div class="progress-container" id="prog-container">
+        <div class="progress-fill" id="prog-fill"></div>
+    </div>
+    <div id="status-msg" class="status-box"></div>
+    <div id="log-area"></div>
 </div>
 
 <script>
     const WORKER_URL = "https://nocob-proxy.kurikulum-sman2cikarangbarat.workers.dev";
     let databaseGuru = [];
-    let parsedSoal = [];
+    let readyData = [];
 
-    // 1. Load Data Independen (Tanpa Filter)
-    async function loadInitialData() {
+    // --- INITIAL LOAD ---
+    async function loadData() {
         try {
             const res = await fetch(`${WORKER_URL}/api/data`);
-            const json = await res.json();
-            databaseGuru = json.list || json;
-
-            const guruSelect = document.getElementById('nama-guru');
-            const mapelSelect = document.getElementById('mapel');
-
-            // Ekstrak Nama Guru Unik
-            const listNama = [...new Set(databaseGuru.map(i => i.nama_guru))].filter(n => n).sort();
-            guruSelect.innerHTML = '<option value="">Pilih Guru</option>';
-            listNama.forEach(n => guruSelect.innerHTML += `<option value="${n}">${n}</option>`);
-
-            // Ekstrak Mapel Unik (Independen)
-            const listMapel = [...new Set(databaseGuru.map(i => i.mapel))].filter(m => m).sort();
-            mapelSelect.innerHTML = '<option value="">Pilih Mapel</option>';
-            listMapel.forEach(m => mapelSelect.innerHTML += `<option value="${m}">${m}</option>`);
-
-        } catch (e) {
-            alert("Gagal memuat profil guru. Periksa koneksi ke Worker.");
-        }
-    }
-
-    // 2. Baca File Excel
-    function handleFile(e) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const bstr = evt.target.result;
-            const wb = XLSX.read(bstr, { type: 'binary' });
-            const ws = wb.Sheets[wb.SheetNames[0]];
-            const data = XLSX.utils.sheet_to_json(ws);
+            databaseGuru = await res.json();
+            const list = databaseGuru.list || databaseGuru;
             
-            parsedSoal = data;
-            document.getElementById('preview-area').style.display = 'block';
-            document.getElementById('soal-stats').textContent = `${data.length} Soal siap diunggah`;
+            const gSel = document.getElementById('nama-guru');
+            const mSel = document.getElementById('mapel');
+            
+            const gurus = [...new Set(list.map(i => i.nama_guru))].sort();
+            const mapels = [...new Set(list.map(i => i.mapel))].sort();
+
+            gSel.innerHTML = '<option value="">Pilih Guru</option>' + gurus.map(g => `<option value="${g}">${g}</option>`).join('');
+            mSel.innerHTML = '<option value="">Pilih Mapel</option>' + mapels.map(m => `<option value="${m}">${m}</option>`).join('');
+        } catch(e) { showStatus("Gagal ambil data guru", "error"); }
+    }
+
+    function switchMode(mode) {
+        document.querySelectorAll('.tab, .mode-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`mode-${mode}`).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // --- DATA HANDLING ---
+    function handleExcel(input) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const wb = XLSX.read(e.target.result, {type:'binary'});
+            readyData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            showStatus(`${readyData.length} soal terbaca dari Excel`, "success");
         };
-        reader.readAsBinaryString(file);
+        reader.readAsBinaryString(input.files[0]);
     }
 
-    // 3. Verifikasi Password
-    function showPasswordModal() {
-        if(!document.getElementById('nama-guru').value) return alert("Pilih Nama Guru dulu!");
-        document.getElementById('password-overlay').style.display = 'flex';
+    function downloadTemplate() {
+        const header = [["nomor_soal", "soal", "opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e", "kunci_jawaban"]];
+        const ws = XLSX.utils.aoa_to_sheet(header);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "TemplateSoal");
+        XLSX.writeFile(wb, "Template_Soal_SMAN2.xlsx");
     }
 
-    function closeModal() {
-        document.getElementById('password-overlay').style.display = 'none';
-        document.getElementById('password-error').style.display = 'none';
-    }
-
-    async function verifyAndSubmit() {
-        const selectedGuru = document.getElementById('nama-guru').value;
-        const pwdInput = document.getElementById('input-pwd').value;
-        const errDiv = document.getElementById('password-error');
-
-        // Cari guru di database lokal
-        const profil = databaseGuru.find(g => g.nama_guru === selectedGuru);
-
-        if (profil && String(profil.pwd) === String(pwdInput)) {
-            closeModal();
-            await processUpload();
-        } else {
-            errDiv.textContent = "Password salah!";
-            errDiv.style.display = 'block';
+    // --- UPLOAD PROCESS ---
+    async function startProcess() {
+        const guru = document.getElementById('nama-guru').value;
+        const pwd = document.getElementById('pwd-input').value;
+        const token = document.getElementById('token-ujian').value;
+        
+        // Verifikasi Password
+        const user = (databaseGuru.list || databaseGuru).find(g => g.nama_guru === guru);
+        if(!user || String(user.pwd) !== String(pwd)) {
+            return showStatus("Password salah atau guru belum dipilih!", "error");
         }
-    }
 
-    // 4. Proses Upload ke NocoDB
-    async function processUpload() {
-        const btn = document.getElementById('btn-save');
+        // Ambil data jika mode paste
+        if(document.getElementById('mode-paste').classList.contains('active')) {
+            const text = document.getElementById('paste-area').value;
+            // Logika sederhana konversi TSV (Excel Paste) ke JSON
+            const rows = text.split("\n").map(r => r.split("\t"));
+            const headers = ["nomor_soal", "soal", "opsi_a", "opsi_b", "opsi_c", "opsi_d", "opsi_e", "kunci_jawaban"];
+            readyData = rows.filter(r => r.length > 1).map(row => {
+                let obj = {};
+                headers.forEach((h, i) => obj[h] = row[i]);
+                return obj;
+            });
+        }
+
+        if(readyData.length === 0) return showStatus("Data soal kosong!", "error");
+
+        const btn = document.getElementById('btn-submit');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner spin"></i> Mengirim...';
-
-        const payloadHeader = {
-            nama_guru: document.getElementById('nama-guru').value,
-            mapel: document.getElementById('mapel').value,
-            kelas: document.getElementById('kelas').value,
-            token: document.getElementById('token-ujian').value,
-            durasi: parseInt(document.getElementById('durasi').value),
-            jml_soal: parsedSoal.length
-        };
+        document.getElementById('prog-container').style.display = 'block';
+        showStatus("Memulai pengunggahan...", "success");
 
         try {
-            // Simpan ke tabel 'ujian'
-            await fetch(`${WORKER_URL}/api/ujian`, {
+            // 1. Upload Header Ujian
+            const resUjian = await fetch(`${WORKER_URL}/api/ujian`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadHeader)
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    nama_guru: guru,
+                    mapel: document.getElementById('mapel').value,
+                    token: token,
+                    jml_soal: readyData.length
+                })
             });
 
-            // Simpan detail soal ke 'bank_soal'
-            const soalWithMeta = parsedSoal.map(s => ({
+            // 2. Upload Bank Soal (Chunked / Bertahap agar tidak timeout)
+            const logArea = document.getElementById('log-area');
+            const total = readyData.length;
+            
+            // Tambahkan metadata ke setiap soal
+            const finalSoal = readyData.map(s => ({
                 ...s,
-                token: payloadHeader.token,
-                nama_guru: payloadHeader.nama_guru
+                token: token,
+                nama_guru: guru
             }));
 
-            await fetch(`${WORKER_URL}/api/bank_soal`, {
+            // Kirim data ke NocoDB (NocoDB POST API menerima Array untuk Bulk Insert)
+            const resSoal = await fetch(`${WORKER_URL}/api/bank_soal`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(soalWithMeta)
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(finalSoal) 
             });
 
-            alert("Sukses! Data ujian dan soal berhasil disimpan.");
-            location.reload();
-        } catch (e) {
-            alert("Terjadi kesalahan saat menyimpan.");
+            if(resSoal.ok) {
+                document.getElementById('prog-fill').style.width = '100%';
+                showStatus("Selesai! Semua data berhasil masuk ke database.", "success");
+                setTimeout(() => location.reload(), 3000);
+            } else {
+                throw new Error("Gagal kirim ke bank_soal");
+            }
+
+        } catch(e) {
+            showStatus("Error: " + e.message, "error");
             btn.disabled = false;
         }
     }
 
-    window.onload = loadInitialData;
-</script>
+    function showStatus(msg, type) {
+        const box = document.getElementById('status-msg');
+        box.style.display = 'block';
+        box.style.background = type === 'success' ? '#dcfce7' : '#fee2e2';
+        box.style.color = type === 'success' ? '#166534' : '#991b1b';
+        box.textContent = msg;
+    }
 
+    window.onload = loadData;
+</script>
 </body>
 </html>
